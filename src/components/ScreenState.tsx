@@ -9,7 +9,7 @@ import type {
   NoResultsTranslations,
   ResultsFooterComponent
 } from '../types'
-import { ErrorIcon, NoResultsIcon } from './Icons'
+import { ErrorIcon, NoResultsIcon, SearchIcon } from './Icons'
 import { SearchResults, type StoredSearchActions } from './SearchResults'
 
 interface ScreenStateProps extends StoredSearchActions {
@@ -19,17 +19,22 @@ interface ScreenStateProps extends StoredSearchActions {
   getMissingResultsUrl?: (params: { query: string }) => string
   hitComponent?: HitComponent
   resultBadgeKey?: string
+  onSelectSuggestion(query: string): void
   resultsFooterComponent?: ResultsFooterComponent
 }
 
 function NoResults({
   query,
   translations = {},
-  getMissingResultsUrl
+  getMissingResultsUrl,
+  suggestions,
+  onSelectSuggestion
 }: {
   query: string
   translations?: NoResultsTranslations
   getMissingResultsUrl?: (params: { query: string }) => string
+  suggestions: string[]
+  onSelectSuggestion(query: string): void
 }) {
   const noResultsText = translations.noResultsText ?? 'No results found for'
   const reportText =
@@ -44,6 +49,27 @@ function NoResults({
       <p class="DocSearch-Title">
         {noResultsText} "<strong>{query}</strong>"
       </p>
+      {suggestions.length ? (
+        <div class="DocSearch-NoResults-Prefill-List">
+          <p class="DocSearch-Help">
+            {translations.suggestedQueryText ?? 'Try searching for'}:
+          </p>
+          <div class="DocSearch-NoResults-Prefill-List-Items">
+            {suggestions.slice(0, 3).map((suggestion) => (
+              <p key={suggestion}>
+                <SearchIcon size={16} />
+                <button
+                  class="DocSearch-Prefill"
+                  type="button"
+                  onClick={() => onSelectSuggestion(suggestion)}
+                >
+                  {suggestion}
+                </button>
+              </p>
+            ))}
+          </div>
+        </div>
+      ) : null}
       {getMissingResultsUrl ? (
         <p class="DocSearch-Help">
           {reportText}{' '}
@@ -97,6 +123,10 @@ export function ScreenState(props: ScreenStateProps) {
         query={props.state.query}
         translations={props.translations?.noResultsScreen}
         getMissingResultsUrl={props.getMissingResultsUrl}
+        suggestions={
+          (props.state.context.searchSuggestions as string[] | undefined) ?? []
+        }
+        onSelectSuggestion={props.onSelectSuggestion}
       />
     )
   }

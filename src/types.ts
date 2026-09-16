@@ -67,6 +67,7 @@ export interface FooterTranslations {
 
 export interface NoResultsTranslations {
   noResultsText?: string
+  suggestedQueryText?: string
   reportMissingResultsText?: string
   reportMissingResultsLinkText?: string
 }

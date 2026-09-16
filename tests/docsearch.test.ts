@@ -516,19 +516,30 @@ describe('docsearch', () => {
       transformSearchClient(searchClient) {
         return {
           ...searchClient,
-          async search() {
+          async search(params) {
+            const requests = (params as {
+              requests: Array<{ query?: string }>
+            }).requests
+            const query = requests[0]?.query ?? ''
             return {
               results: [
                 {
                   index: 'docs',
-                  hits: [],
+                  hits: query === 'guide'
+                    ? [{
+                        objectID: 'guide',
+                        type: 'lvl1',
+                        url: '/guide',
+                        hierarchy: { lvl0: 'Guide', lvl1: 'Overview' }
+                      }]
+                    : [],
                   hitsPerPage: 20,
-                  nbHits: 0,
-                  nbPages: 0,
+                  nbHits: query === 'guide' ? 1 : 0,
+                  nbPages: query === 'guide' ? 1 : 0,
                   page: 0,
                   processingTimeMS: 1,
                   exhaustiveNbHits: true,
-                  query: 'missing',
+                  query,
                   params: ''
                 }
               ]
@@ -542,6 +553,11 @@ describe('docsearch', () => {
     instance.open()
     await nextTick()
     const input = document.querySelector<HTMLInputElement>('.DocSearch-Input')!
+    input.value = 'guide'
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+    await expect.poll(() => document.querySelector('.DocSearch-Hit-source')?.textContent)
+      .toBe('Guide')
+
     input.value = 'missing'
     input.dispatchEvent(new Event('input', { bubbles: true }))
 
@@ -554,6 +570,11 @@ describe('docsearch', () => {
     expect(document.querySelector('.DocSearch-Help a')?.getAttribute('href')).toBe(
       '/report?query=missing'
     )
+    expect(document.querySelector('.DocSearch-Prefill')?.textContent).toBe('Guide')
+
+    document.querySelector<HTMLButtonElement>('.DocSearch-Prefill')!.click()
+    await nextTick()
+    expect(input.value).toBe('guide ')
   })
 
   it('updates an open mount when VitePress initializes the container again', async () => {

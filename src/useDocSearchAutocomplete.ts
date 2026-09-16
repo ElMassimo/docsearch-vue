@@ -142,7 +142,7 @@ export function useDocSearchAutocomplete(
     onStateChange({ state: nextState }) {
       state.value = nextState
     },
-    async getSources({ query, setStatus }) {
+    async getSources({ query, setContext, setStatus }) {
       if (!query) {
         if (options.disableUserPersonalization) return []
 
@@ -188,20 +188,24 @@ export function useDocSearchAutocomplete(
           }))
         })
 
-        return results.flatMap((result, resultIndex) => {
+        const existingSuggestions =
+          state.value.context.searchSuggestions as string[] | undefined
+        const suggestions = new Set(existingSuggestions ?? [])
+        const sources = results.flatMap((result, resultIndex) => {
           const response = result as SearchResponse<DocSearchHit>
           const hits = options.transformItems?.(response.hits) ?? response.hits
           const groupedHits = new Map<string, DocSearchHit[]>()
 
           for (const hit of hits) {
             const title = hit.hierarchy.lvl0 ?? ''
+            if (title) suggestions.add(title)
             groupedHits.set(title, [...(groupedHits.get(title) ?? []), hit])
           }
 
           return Array.from(groupedHits, ([, items], groupIndex) => ({
             sourceId: `hits_${response.index ?? resultIndex}_${groupIndex}`,
-            getItemUrl: ({ item }) => item.url,
-            onSelect({ item, event }) {
+            getItemUrl: ({ item }: { item: DocSearchHit }) => item.url,
+            onSelect({ item, event }: { item: DocSearchHit; event: Event }) {
               saveRecentSearch(item)
               if (!isModifierEvent(event)) onClose()
             },
@@ -210,6 +214,11 @@ export function useDocSearchAutocomplete(
             )
           }))
         })
+
+        if (suggestions.size > (existingSuggestions?.length ?? 0)) {
+          setContext({ searchSuggestions: [...suggestions] })
+        }
+        return sources
       } catch (error) {
         if ((error as Error).name === 'RetryError') setStatus('error')
         throw error

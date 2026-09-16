@@ -99,6 +99,11 @@ export const SearchModal = defineComponent({
               hitComponent={props.options.hitComponent}
               resultBadgeKey={props.options.resultBadgeKey}
               resultsFooterComponent={props.options.resultsFooterComponent}
+              onSelectSuggestion={(query) => {
+                autocomplete.setQuery(`${query.toLowerCase()} `)
+                void autocomplete.refresh()
+                input.value?.focus()
+              }}
               onFavorite={favorite}
               onRemoveFavorite={removeFavorite}
               onRemoveRecent={removeRecent}
