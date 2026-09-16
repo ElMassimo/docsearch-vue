@@ -84,7 +84,9 @@ export function createDocSearchRoot(
           />
 
           {isOpen.value ? (
-            <Teleport to="body">
+            <Teleport
+              to={options.value.portalContainer ?? environment.document.body}
+            >
               <SearchModal
                 key={optionsVersion.value}
                 options={options.value}

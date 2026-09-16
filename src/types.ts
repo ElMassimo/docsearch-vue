@@ -155,6 +155,7 @@ interface CommonDocSearchOptions {
   placeholder?: string
   initialQuery?: string
   keyboardShortcuts?: DocSearchKeyboardShortcuts
+  portalContainer?: DocumentFragment | Element
   onReady?: () => void
   onOpen?: () => void
   onClose?: () => void

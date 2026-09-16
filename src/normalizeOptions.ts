@@ -36,6 +36,7 @@ export function normalizeOptions(
     placeholder: options.placeholder,
     initialQuery: options.initialQuery,
     keyboardShortcuts: options.keyboardShortcuts,
+    portalContainer: options.portalContainer,
     onReady: options.onReady,
     onOpen: options.onOpen,
     onClose: options.onClose,

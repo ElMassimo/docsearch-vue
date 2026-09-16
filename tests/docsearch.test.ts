@@ -157,6 +157,27 @@ describe('docsearch', () => {
     expect(document.documentElement.dataset.theme).toBe('light')
   })
 
+  it('teleports the modal into a custom portal container', async () => {
+    document.body.innerHTML = '<div id="docsearch"></div><div id="portal"></div>'
+    const portal = document.querySelector('#portal')!
+    const instance = docsearch({
+      appId: 'app',
+      apiKey: 'key',
+      container: '#docsearch',
+      indices: ['docs'],
+      portalContainer: portal
+    })
+    instances.push(instance)
+
+    instance.open()
+    await nextTick()
+
+    expect(portal.querySelector('.DocSearch-Modal')).not.toBeNull()
+    instance.close()
+    await nextTick()
+    expect(portal.querySelector('.DocSearch-Modal')).toBeNull()
+  })
+
   it('opens, closes, and destroys the teleported modal', async () => {
     document.body.innerHTML = '<div id="docsearch"></div>'
     const instance = docsearch({
