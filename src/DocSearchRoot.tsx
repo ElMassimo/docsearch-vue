@@ -23,6 +23,16 @@ export function createDocSearchRoot(
     setup() {
       const searchButton = ref<HTMLButtonElement | null>(null)
       const environment = options.value.environment ?? window
+      const documentElement = environment.document.documentElement
+      const initialTheme = documentElement.dataset.theme
+
+      function restoreTheme(): void {
+        if (initialTheme === undefined) {
+          delete documentElement.dataset.theme
+        } else {
+          documentElement.dataset.theme = initialTheme
+        }
+      }
 
       function isEditingContent(event: KeyboardEvent): boolean {
         const element = event.target as HTMLElement | null
@@ -55,6 +65,15 @@ export function createDocSearchRoot(
         isOpen.value = closeShortcut ? false : !isOpen.value
       }
 
+      watch(
+        () => options.value.theme,
+        (theme) => {
+          if (theme) documentElement.dataset.theme = theme
+          else restoreTheme()
+        },
+        { immediate: true }
+      )
+
       watch(isOpen, (open) => {
         environment.document.body.classList.toggle('DocSearch--active', open)
         if (open) {
@@ -69,6 +88,7 @@ export function createDocSearchRoot(
       onUnmounted(() => {
         environment.removeEventListener('keydown', onKeyDown)
         environment.document.body.classList.remove('DocSearch--active')
+        restoreTheme()
       })
 
       return () => (

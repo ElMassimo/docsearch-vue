@@ -147,6 +147,7 @@ describe('docsearch', () => {
       theme: 'dark'
     })
     instances.push(instance)
+    expect(document.documentElement.dataset.theme).toBe('dark')
 
     instance.open()
     await nextTick()
@@ -154,6 +155,9 @@ describe('docsearch', () => {
 
     instance.close()
     await nextTick()
+    expect(document.documentElement.dataset.theme).toBe('dark')
+
+    instance.destroy()
     expect(document.documentElement.dataset.theme).toBe('light')
   })
 
