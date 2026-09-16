@@ -4,8 +4,13 @@ import {
 } from '@algolia/autocomplete-core'
 import type { SearchResponse } from 'algoliasearch/lite'
 import { liteClient } from 'algoliasearch/lite'
-import { shallowRef } from 'vue'
+import { computed, onMounted, ref, shallowRef } from 'vue'
 
+import {
+  createFacetFilters,
+  deriveFacetSelections,
+  normalizeFacets
+} from './facets'
 import { createStoredSearches } from './storedSearches'
 import type {
   DocSearchAutocomplete,
@@ -74,6 +79,41 @@ export function useDocSearchAutocomplete(
     environment.localStorage
   )
   const searchClient = createSearchClient(options)
+  const facets = normalizeFacets(options.facets)
+  const facetValues = shallowRef<Record<string, string[]>>({})
+  const facetSelections = ref(deriveFacetSelections(options.indices))
+  const visibleFacets = computed(() => facets
+    .map((facet) => ({ ...facet, values: facetValues.value[facet.key] ?? [] }))
+    .filter((facet) => facet.values.length > 0))
+
+  onMounted(async () => {
+    if (facets.length === 0) return
+
+    try {
+      const { results } = await searchClient.search<DocSearchHit>({
+        requests: options.indices.map((index) => ({
+          indexName: index.name,
+          query: '',
+          hitsPerPage: 0,
+          facets: facets.map((facet) => facet.key)
+        }))
+      })
+      const values: Record<string, string[]> = Object.fromEntries(
+        facets.map((facet) => [facet.key, []])
+      )
+      for (const result of results) {
+        const response = result as SearchResponse<DocSearchHit>
+        for (const [facet, counts] of Object.entries(response.facets ?? {})) {
+          if (!values[facet]) continue
+          values[facet] = [...new Set([...values[facet], ...Object.keys(counts)])]
+            .sort((left, right) => left.localeCompare(right))
+        }
+      }
+      facetValues.value = values
+    } catch {
+      facetValues.value = {}
+    }
+  })
 
   function saveRecentSearch(item: DocSearchHit): void {
     if (options.disableUserPersonalization) return
@@ -140,7 +180,11 @@ export function useDocSearchAutocomplete(
             highlightPreTag: '<mark>',
             highlightPostTag: '</mark>',
             hitsPerPage: 20,
-            ...index.searchParameters
+            ...index.searchParameters,
+            facetFilters: createFacetFilters(
+              index.searchParameters?.facetFilters,
+              facetSelections.value
+            )
           }))
         })
 
@@ -176,6 +220,20 @@ export function useDocSearchAutocomplete(
   return {
     autocomplete,
     environment,
+    facetSelections,
+    visibleFacets,
+    setFacetSelection(facet: string, values: string[]) {
+      facetSelections.value = { ...facetSelections.value, [facet]: values }
+      void autocomplete.refresh()
+    },
+    clearFacetSelections() {
+      const cleared = { ...facetSelections.value }
+      for (const facet of facets) {
+        if (facet.key in cleared) cleared[facet.key] = []
+      }
+      facetSelections.value = cleared
+      void autocomplete.refresh()
+    },
     favorite(item: DocSearchHit) {
       favoriteSearches.add(item)
       recentSearches.remove(item)

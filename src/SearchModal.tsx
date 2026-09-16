@@ -1,5 +1,6 @@
 import { defineComponent, onMounted, ref, type PropType } from 'vue'
 
+import { FacetBar } from './components/FacetBar'
 import { Footer } from './components/Footer'
 import { ScreenState } from './components/ScreenState'
 import { SearchBox } from './components/SearchBox'
@@ -27,11 +28,15 @@ export const SearchModal = defineComponent({
     const modal = ref<HTMLDivElement | null>(null)
     const {
       autocomplete,
+      clearFacetSelections,
       environment,
+      facetSelections,
       favorite,
       removeFavorite,
       removeRecent,
-      state
+      setFacetSelection,
+      state,
+      visibleFacets
     } = useDocSearchAutocomplete(props.options, props.onClose)
 
     useModalEnvironment(
@@ -73,6 +78,16 @@ export const SearchModal = defineComponent({
               translations={props.options.translations?.modal?.searchBox}
             />
           </header>
+
+          {state.value.query ? (
+            <FacetBar
+              facets={visibleFacets.value}
+              selections={facetSelections.value}
+              translations={props.options.translations?.modal?.facets}
+              onSelectionChange={setFacetSelection}
+              onClear={clearFacetSelections}
+            />
+          ) : null}
 
           <div ref={dropdown} class="DocSearch-Dropdown">
             <ScreenState

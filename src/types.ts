@@ -83,8 +83,18 @@ export interface ErrorTranslations {
   helpText?: string
 }
 
+export interface FacetTranslations {
+  defaultValueLabel?: string
+  facetMenuTriggerAriaLabel?: string
+  clearAllLabel?: string
+  facetsAriaLabel?: string
+  selectedFacetsAriaLabel?: string
+  clearFacetAriaLabel?: string
+}
+
 export interface ModalTranslations {
   searchBox?: SearchBoxTranslations
+  facets?: FacetTranslations
   footer?: FooterTranslations
   noResultsScreen?: NoResultsTranslations
   errorScreen?: ErrorTranslations
@@ -133,6 +143,7 @@ interface CommonDocSearchOptions {
   getMissingResultsUrl?: (params: { query: string }) => string
   translations?: DocSearchTranslations
   disableUserPersonalization?: boolean
+  facets?: DocSearchFacet[]
   maxResultsPerGroup?: number
   hitComponent?: HitComponent
   recentSearchesLimit?: number

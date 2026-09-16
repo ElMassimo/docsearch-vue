@@ -358,6 +358,69 @@ describe('docsearch', () => {
     expect(instance.isOpen).toBe(false)
   })
 
+  it('loads facet values and applies selected filters to searches', async () => {
+    document.body.innerHTML = '<div id="docsearch"></div>'
+    const requests: Array<Array<Record<string, unknown>>> = []
+    const instance = docsearch({
+      appId: 'app',
+      apiKey: 'key',
+      container: '#docsearch',
+      indices: ['docs'],
+      initialQuery: 'guide',
+      facets: [{ key: 'language', label: 'Language' }],
+      transformSearchClient(searchClient) {
+        return {
+          ...searchClient,
+          async search(params) {
+            const nextRequests = (params as {
+              requests: Array<Record<string, unknown>>
+            }).requests
+            requests.push(nextRequests)
+            const isFacetRequest = nextRequests[0]?.hitsPerPage === 0
+            return {
+              results: [
+                {
+                  index: 'docs',
+                  hits: [],
+                  facets: isFacetRequest
+                    ? { language: { en: 2, fr: 1 } }
+                    : undefined,
+                  hitsPerPage: isFacetRequest ? 0 : 20,
+                  nbHits: 0,
+                  nbPages: 0,
+                  page: 0,
+                  processingTimeMS: 1,
+                  exhaustiveNbHits: true,
+                  query: isFacetRequest ? '' : 'guide',
+                  params: ''
+                }
+              ]
+            } as never
+          }
+        }
+      }
+    })
+    instances.push(instance)
+    instance.open()
+    await nextTick()
+
+    await expect
+      .poll(() => document.querySelector('.DocSearch-Menu-Trigger')?.textContent)
+      .toContain('Language')
+
+    document.querySelector<HTMLButtonElement>('.DocSearch-Menu-Trigger')!.click()
+    const frenchOption = [...document.querySelectorAll<HTMLButtonElement>(
+      '.DocSearch-Menu-item'
+    )].find((button) => button.textContent?.trim() === 'Fr')!
+    frenchOption.click()
+
+    await expect.poll(() => requests.some((request) =>
+      Array.isArray(request[0]?.facetFilters) &&
+      request[0].facetFilters.includes('language:fr')
+    )).toBe(true)
+    expect(document.querySelector('.DocSearch-Chip')?.textContent).toContain('Fr')
+  })
+
   it('shows the DocSearch 5 no-results state for an empty response', async () => {
     document.body.innerHTML = '<div id="docsearch"></div>'
     const instance = docsearch({

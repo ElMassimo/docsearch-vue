@@ -5,12 +5,14 @@ export type { DocSearchInstance } from './docsearch'
 export { normalizeOptions } from './normalizeOptions'
 export type {
   ButtonTranslations,
+  DocSearchFacet,
   DocSearchHit,
   DocSearchIndex,
   DocSearchOptions,
   DocSearchTransformClient,
   DocSearchTranslations,
   ErrorTranslations,
+  FacetTranslations,
   FooterTranslations,
   HitComponent,
   HitComponentProps,

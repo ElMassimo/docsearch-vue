@@ -40,6 +40,7 @@ export function normalizeOptions(
     getMissingResultsUrl: options.getMissingResultsUrl,
     translations: options.translations,
     disableUserPersonalization: options.disableUserPersonalization,
+    facets: options.facets,
     maxResultsPerGroup: options.maxResultsPerGroup,
     hitComponent: options.hitComponent,
     recentSearchesLimit: options.recentSearchesLimit,
