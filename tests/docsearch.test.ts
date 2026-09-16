@@ -354,7 +354,7 @@ describe('docsearch', () => {
                     {
                       objectID: 'getting-started',
                       type: 'lvl1',
-                      url: '/guide/getting-started',
+                      url: 'javascript:alert(1)',
                       hierarchy: {
                         lvl0: 'Guide',
                         lvl1: 'Getting Started'
@@ -433,6 +433,7 @@ describe('docsearch', () => {
     expect(document.querySelector('.DocSearch-Hit a')?.getAttribute('data-vitepress-hit')).toBe(
       'true'
     )
+    expect(document.querySelector('.DocSearch-Hit a')?.getAttribute('href')).toBe('#')
     expect(document.querySelector('.DocSearch-Hit a')?.getAttribute('data-query-id')).toBe(
       'query-1'
     )

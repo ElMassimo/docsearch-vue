@@ -56,6 +56,16 @@ function isModifierEvent(event: Event): boolean {
   )
 }
 
+function sanitizeHitUrl(hit: DocSearchHit): DocSearchHit {
+  try {
+    const url = new URL(hit.url, 'https://docsearch.invalid')
+    if (url.protocol === 'http:' || url.protocol === 'https:') return hit
+  } catch {
+    // Invalid and unsafe URLs are replaced below.
+  }
+  return { ...hit, url: '#' }
+}
+
 function addParents(items: DocSearchHit[]): DocSearchHit[] {
   return items.map((item) => ({
     ...item,
@@ -174,7 +184,7 @@ export function useDocSearchAutocomplete(
           {
             sourceId: 'favoriteSearches',
             getItemUrl: ({ item }) => item.url,
-            getItems: () => favoriteSearches.getAll(),
+            getItems: () => favoriteSearches.getAll().map(sanitizeHitUrl),
             onSelect: ({ event }) => {
               if (!isModifierEvent(event)) onClose()
             }
@@ -182,7 +192,7 @@ export function useDocSearchAutocomplete(
           {
             sourceId: 'recentSearches',
             getItemUrl: ({ item }) => item.url,
-            getItems: () => recentSearches.getAll(),
+            getItems: () => recentSearches.getAll().map(sanitizeHitUrl),
             onSelect: ({ event }) => {
               if (!isModifierEvent(event)) onClose()
             }
@@ -225,7 +235,9 @@ export function useDocSearchAutocomplete(
         const suggestions = new Set(existingSuggestions ?? [])
         const sources = results.flatMap((result, resultIndex) => {
           const response = result as SearchResponse<DocSearchHit>
-          const hits = options.transformItems?.(response.hits) ?? response.hits
+          const transformedHits =
+            options.transformItems?.(response.hits) ?? response.hits
+          const hits = transformedHits.map(sanitizeHitUrl)
           const groupedHits = new Map<string, DocSearchHit[]>()
 
           for (const hit of hits) {
