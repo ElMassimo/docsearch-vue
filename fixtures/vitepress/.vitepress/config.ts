@@ -10,20 +10,25 @@ export default defineConfig({
         appId: 'test-app',
         apiKey: 'test-key',
         indexName: 'test-docs',
+        facets: [{ key: 'language', label: 'Language' }],
         transformSearchClient(searchClient) {
           return {
             ...searchClient,
             async search(params) {
               const requests = (params as {
-                requests: Array<{ query?: string }>
+                requests: Array<{ query?: string; hitsPerPage?: number }>
               }).requests
               const query = requests[0]?.query ?? ''
+              const isFacetRequest = requests[0]?.hitsPerPage === 0
               const isInstall = query === 'install'
               return {
                 results: [
                   {
                     index: 'test-docs',
-                    hits: [
+                    facets: isFacetRequest
+                      ? { language: { en: 2, fr: 1 } }
+                      : undefined,
+                    hits: isFacetRequest ? [] : [
                       {
                         objectID: isInstall ? 'install' : 'getting-started',
                         type: 'lvl1',
@@ -36,9 +41,9 @@ export default defineConfig({
                         }
                       }
                     ],
-                    hitsPerPage: 20,
-                    nbHits: 1,
-                    nbPages: 1,
+                    hitsPerPage: isFacetRequest ? 0 : 20,
+                    nbHits: isFacetRequest ? 0 : 1,
+                    nbPages: isFacetRequest ? 0 : 1,
                     page: 0,
                     processingTimeMS: 1,
                     exhaustiveNbHits: true,

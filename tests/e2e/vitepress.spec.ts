@@ -27,6 +27,10 @@ test('replaces VitePress DocSearch with the Vue implementation', async ({
     'true'
   )
 
+  await page.getByRole('button', { name: 'Language' }).click()
+  await page.getByRole('menuitemcheckbox', { name: 'En' }).click()
+  await expect(page.locator('.DocSearch-Chip')).toContainText('En')
+
   await page.locator('.DocSearch-Input').press('Shift+Tab')
   await expect(page.getByRole('link', { name: /Powered by Algolia/i })).toBeFocused()
 
