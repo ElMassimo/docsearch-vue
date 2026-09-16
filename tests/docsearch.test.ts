@@ -373,28 +373,42 @@ describe('docsearch', () => {
     )
   })
 
-  it('updates an existing mount when VitePress initializes the container again', () => {
+  it('updates an open mount when VitePress initializes the container again', async () => {
     document.body.innerHTML = '<div id="docsearch"></div>'
+    const search = vi.fn(async () => ({ results: [] }) as never)
+    const transformSearchClient = (searchClient: Parameters<
+      NonNullable<Parameters<typeof docsearch>[0]['transformSearchClient']>
+    >[0]) => ({ ...searchClient, search })
 
     const first = docsearch({
       appId: 'app',
       apiKey: 'key',
       container: '#docsearch',
       indexName: 'docs-en',
-      placeholder: 'Search English docs'
+      initialQuery: 'english',
+      placeholder: 'Search English docs',
+      transformSearchClient
     })
     instances.push(first)
+    first.open()
+    await nextTick()
 
     const second = docsearch({
       appId: 'app',
       apiKey: 'key',
       container: '#docsearch',
       indexName: 'docs-fr',
-      placeholder: 'Rechercher'
+      initialQuery: 'français',
+      placeholder: 'Rechercher',
+      transformSearchClient
     })
+    await nextTick()
 
     expect(second).toBe(first)
     expect(document.querySelectorAll('.DocSearch-Button')).toHaveLength(1)
+    expect(document.querySelector<HTMLInputElement>('.DocSearch-Input')?.value).toBe(
+      'français'
+    )
   })
 
   it('reports a missing selector instead of mounting to an unknown element', () => {

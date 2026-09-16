@@ -14,7 +14,8 @@ import type { NormalizedDocSearchOptions } from './types'
 
 export function createDocSearchRoot(
   options: ShallowRef<NormalizedDocSearchOptions>,
-  isOpen: Ref<boolean>
+  isOpen: Ref<boolean>,
+  optionsVersion: Ref<number>
 ) {
   return defineComponent({
     name: 'DocSearchRoot',
@@ -84,6 +85,7 @@ export function createDocSearchRoot(
           {isOpen.value ? (
             <Teleport to="body">
               <SearchModal
+                key={optionsVersion.value}
                 options={options.value}
                 onClose={() => {
                   isOpen.value = false

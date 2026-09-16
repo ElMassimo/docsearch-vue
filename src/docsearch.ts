@@ -1,4 +1,4 @@
-import { createApp, ref, shallowRef, type App } from 'vue'
+import { createApp, ref, shallowRef, type App, type Ref } from 'vue'
 
 import { createDocSearchRoot } from './DocSearchRoot'
 import { normalizeOptions } from './normalizeOptions'
@@ -16,6 +16,7 @@ interface MountedDocSearch {
   app: App
   instance: DocSearchInstance
   options: ReturnType<typeof shallowRef<NormalizedDocSearchOptions>>
+  optionsVersion: Ref<number>
 }
 
 const mountedDocSearch = new WeakMap<HTMLElement, MountedDocSearch>()
@@ -46,12 +47,15 @@ export default function docsearch(
 
   if (mounted) {
     mounted.options.value = normalizedOptions
+    mounted.optionsVersion.value += 1
+    normalizedOptions.onReady?.()
     return mounted.instance
   }
 
   const options = shallowRef(normalizedOptions)
+  const optionsVersion = ref(0)
   const isOpen = ref(false)
-  const app = createApp(createDocSearchRoot(options, isOpen))
+  const app = createApp(createDocSearchRoot(options, isOpen, optionsVersion))
   let isReady = false
 
   const instance: DocSearchInstance = {
@@ -78,7 +82,7 @@ export default function docsearch(
 
   app.mount(container)
   isReady = true
-  mountedDocSearch.set(container, { app, instance, options })
+  mountedDocSearch.set(container, { app, instance, options, optionsVersion })
   normalizedOptions.onReady?.()
 
   return instance
