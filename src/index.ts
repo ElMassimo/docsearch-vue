@@ -8,6 +8,7 @@ export type {
   DocSearchFacet,
   DocSearchHit,
   DocSearchIndex,
+  DocSearchKeyboardShortcuts,
   DocSearchOptions,
   DocSearchTransformClient,
   DocSearchTranslations,

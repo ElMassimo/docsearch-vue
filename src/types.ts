@@ -113,6 +113,11 @@ export interface DocSearchTranslations {
   modal?: ModalTranslations
 }
 
+export interface DocSearchKeyboardShortcuts {
+  'Ctrl/Cmd+K'?: boolean
+  '/'?: boolean
+}
+
 export interface DocSearchIndex {
   name: string
   searchParameters?: SearchParamsObject
@@ -149,6 +154,7 @@ interface CommonDocSearchOptions {
   theme?: 'dark' | 'light'
   placeholder?: string
   initialQuery?: string
+  keyboardShortcuts?: DocSearchKeyboardShortcuts
   onReady?: () => void
   onOpen?: () => void
   onClose?: () => void

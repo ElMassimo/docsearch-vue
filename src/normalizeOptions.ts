@@ -35,6 +35,7 @@ export function normalizeOptions(
     theme: options.theme,
     placeholder: options.placeholder,
     initialQuery: options.initialQuery,
+    keyboardShortcuts: options.keyboardShortcuts,
     onReady: options.onReady,
     onOpen: options.onOpen,
     onClose: options.onClose,

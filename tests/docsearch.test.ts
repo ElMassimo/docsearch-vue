@@ -63,8 +63,8 @@ describe('docsearch', () => {
     expect(document.querySelector('.DocSearch-Button')?.textContent).toContain(
       'Rechercher'
     )
-    expect(document.querySelector('.DocSearch-Button')?.getAttribute('aria-label')).toBe(
-      'Ouvrir la recherche'
+    expect(document.querySelector('.DocSearch-Button')?.getAttribute('aria-label')).toMatch(
+      /^Ouvrir la recherche \((Meta|Control)\+k\)$/
     )
 
     instance.open()
@@ -186,6 +186,32 @@ describe('docsearch', () => {
 
     expect(instance.isReady).toBe(false)
     expect(document.querySelector('.DocSearch-Button')).toBeNull()
+  })
+
+  it('renders the platform shortcut and allows shortcuts to be disabled', async () => {
+    document.body.innerHTML = '<div id="docsearch"></div>'
+    const instance = docsearch({
+      appId: 'app',
+      apiKey: 'key',
+      container: '#docsearch',
+      indices: ['docs'],
+      keyboardShortcuts: {
+        'Ctrl/Cmd+K': false,
+        '/': false
+      }
+    })
+    instances.push(instance)
+
+    expect(document.querySelector('.DocSearch-Search-Icon')).not.toBeNull()
+    expect(document.querySelector('.DocSearch-Button-Keys')?.children).toHaveLength(0)
+    expect(document.querySelector('.DocSearch-Button')?.hasAttribute(
+      'aria-keyshortcuts'
+    )).toBe(false)
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: '/' }))
+    await nextTick()
+    expect(instance.isOpen).toBe(false)
   })
 
   it('opens from VitePress keyboard polling and closes with Escape', async () => {

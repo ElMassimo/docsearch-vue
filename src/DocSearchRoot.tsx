@@ -9,6 +9,7 @@ import {
   type ShallowRef
 } from 'vue'
 
+import { SearchButton } from './components/SearchButton'
 import { SearchModal } from './SearchModal'
 import type { NormalizedDocSearchOptions } from './types'
 
@@ -36,10 +37,16 @@ export function createDocSearchRoot(
       }
 
       function onKeyDown(event: KeyboardEvent): void {
+        const shortcuts = options.value.keyboardShortcuts
         const toggleShortcut =
-          event.key?.toLowerCase() === 'k' && (event.metaKey || event.ctrlKey)
+          shortcuts?.['Ctrl/Cmd+K'] !== false &&
+          event.key?.toLowerCase() === 'k' &&
+          (event.metaKey || event.ctrlKey)
         const openSlashShortcut =
-          event.key === '/' && !isOpen.value && !isEditingContent(event)
+          shortcuts?.['/'] !== false &&
+          event.key === '/' &&
+          !isOpen.value &&
+          !isEditingContent(event)
         const closeShortcut = event.key === 'Escape' && isOpen.value
 
         if (!toggleShortcut && !openSlashShortcut && !closeShortcut) return
@@ -66,21 +73,15 @@ export function createDocSearchRoot(
 
       return () => (
         <>
-          <button
-            type="button"
-            class="DocSearch DocSearch-Button"
-            ref={searchButton}
-            aria-label={
-              options.value.translations?.button?.buttonAriaLabel ?? 'Search'
-            }
+          <SearchButton
+            buttonRef={searchButton}
+            environment={environment}
+            keyboardShortcuts={options.value.keyboardShortcuts}
+            translations={options.value.translations?.button}
             onClick={() => {
               isOpen.value = true
             }}
-          >
-            <span class="DocSearch-Button-Placeholder">
-              {options.value.translations?.button?.buttonText ?? 'Search'}
-            </span>
-          </button>
+          />
 
           {isOpen.value ? (
             <Teleport to="body">
