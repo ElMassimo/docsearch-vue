@@ -3,6 +3,7 @@ dist/
 coverage/
 test-results/
 playwright-report/
+.claude/worktrees/
 **/.vitepress/cache/
 **/.vitepress/dist/
 .env
