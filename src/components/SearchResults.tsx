@@ -10,7 +10,13 @@ import type {
   ResultsTranslations,
   StartScreenTranslations
 } from '../types'
-import { CloseIcon, PinIcon, SelectIcon, SourceIcon } from './Icons'
+import {
+  CloseIcon,
+  PinIcon,
+  RecentIcon,
+  SelectIcon,
+  SourceIcon
+} from './Icons'
 
 export interface StoredSearchActions {
   onFavorite(item: DocSearchHit): void
@@ -107,16 +113,28 @@ export function SearchResults(props: SearchResultsProps) {
 
         return (
           <section class="DocSearch-Hits" key={sourceId}>
-            <div class="DocSearch-Hit-source"><SourceIcon />{title}</div>
+            <div class="DocSearch-Hit-source">
+              {isFavorite ? <PinIcon /> : isRecent ? <RecentIcon /> : null}
+              {title}
+            </div>
             <ul
               class="DocSearch-Hits-padded"
               {...props.autocomplete.getListProps({ source: collection.source })}
             >
-              {collection.items.map((item) => {
+              {collection.items.map((item, index) => {
+                const nextItem = collection.items[index + 1]
                 const content = (
                   <div class="DocSearch-Hit-Container">
-                    {item.__docsearch_parent ? <HitTree /> : null}
-                    <div class="DocSearch-Hit-icon"><SourceIcon /></div>
+                    {item.__docsearch_parent ? (
+                      <HitTree
+                        continues={
+                          item.__docsearch_parent === nextItem?.__docsearch_parent
+                        }
+                      />
+                    ) : null}
+                    <div class="DocSearch-Hit-icon">
+                      <SourceIcon type={item.type} />
+                    </div>
                     <div class="DocSearch-Hit-content-wrapper">
                       <span class="DocSearch-Hit-title">{hitTitle(item)}</span>
                       <span class="DocSearch-Hit-path">{breadcrumbs(item)}</span>
@@ -218,11 +236,11 @@ function renderHit(
   return h('a', { href: hit.url }, children)
 }
 
-function HitTree() {
+function HitTree({ continues }: { continues: boolean }) {
   return (
     <svg class="DocSearch-Hit-Tree" viewBox="0 0 24 54" aria-hidden="true">
       <path
-        d="M8 6v21M20 27H8.3"
+        d={continues ? 'M8 6v42M20 27H8.3' : 'M8 6v21M20 27H8.3'}
         fill="none"
         stroke="currentColor"
         stroke-linecap="round"
