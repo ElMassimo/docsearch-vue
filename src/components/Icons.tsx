@@ -5,6 +5,32 @@ interface IconProps {
   size?: number
 }
 
+export function LoadingIcon(props: IconProps) {
+  return (
+    <svg
+      {...props}
+      viewBox="0 0 38 38"
+      stroke="currentColor"
+      stroke-opacity=".5"
+      aria-hidden="true"
+    >
+      <g fill="none" fill-rule="evenodd" transform="translate(1 1)" stroke-width="2">
+        <circle stroke-opacity=".3" cx="18" cy="18" r="18" />
+        <path d="M36 18c0-9.94-8.06-18-18-18">
+          <animateTransform
+            attributeName="transform"
+            type="rotate"
+            from="0 18 18"
+            to="360 18 18"
+            dur="1s"
+            repeatCount="indefinite"
+          />
+        </path>
+      </g>
+    </svg>
+  )
+}
+
 export function SearchIcon({ size = 20, ...props }: IconProps) {
   return (
     <svg {...props} width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">

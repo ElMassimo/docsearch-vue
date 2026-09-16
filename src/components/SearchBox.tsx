@@ -6,7 +6,7 @@ import type {
   DocSearchHit,
   SearchBoxTranslations
 } from '../types'
-import { CloseIcon, SearchIcon } from './Icons'
+import { CloseIcon, LoadingIcon, SearchIcon } from './Icons'
 
 interface SearchBoxProps {
   autocomplete: DocSearchAutocomplete
@@ -54,15 +54,19 @@ export function SearchBox(props: SearchBoxProps) {
 
   return (
     <form class="DocSearch-Form" ref={props.form} {...formProps}>
-      <label
-        class={isLoading ? 'DocSearch-LoadingIndicator' : 'DocSearch-MagnifierLabel'}
-        {...props.autocomplete.getLabelProps()}
-      >
-        <SearchIcon />
-        <span class="DocSearch-VisuallyHiddenForAccessibility">
-          {searchInputLabel}
-        </span>
-      </label>
+      {isLoading ? (
+        <div class="DocSearch-LoadingIndicator"><LoadingIcon /></div>
+      ) : (
+        <label
+          class="DocSearch-MagnifierLabel"
+          {...props.autocomplete.getLabelProps()}
+        >
+          <SearchIcon />
+          <span class="DocSearch-VisuallyHiddenForAccessibility">
+            {searchInputLabel}
+          </span>
+        </label>
+      )}
 
       <input
         class="DocSearch-Input"
