@@ -34,6 +34,7 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm test:vitepress
+      - run: pnpm check:bundle
       - run: pnpm audit --prod --audit-level high
 
   e2e:
@@ -55,5 +56,7 @@ jobs:
         if: failure()
         with:
           name: playwright-report
-          path: playwright-report/
+          path: |
+            playwright-report/
+            test-results/
           retention-days: 7
