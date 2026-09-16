@@ -4,9 +4,12 @@
   "description": "A Vue implementation of the DocSearch 5 keyword-search experience",
   "license": "MIT",
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "files": [
-    "dist"
+    "dist",
+    "NOTICE"
   ],
   "exports": {
     ".": {
