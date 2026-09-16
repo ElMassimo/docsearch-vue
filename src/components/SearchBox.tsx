@@ -6,6 +6,7 @@ import { CloseIcon, SearchIcon } from './Icons'
 
 interface SearchBoxProps {
   autocomplete: DocSearchAutocomplete
+  form: Ref<HTMLFormElement | null>
   input: Ref<HTMLInputElement | null>
   onClose: () => void
   placeholder: string
@@ -30,7 +31,7 @@ export function SearchBox(props: SearchBoxProps) {
   const hasQuery = Boolean(props.state.query)
 
   return (
-    <form class="DocSearch-Form" {...formProps}>
+    <form class="DocSearch-Form" ref={props.form} {...formProps}>
       <label
         class={isLoading ? 'DocSearch-LoadingIndicator' : 'DocSearch-MagnifierLabel'}
         {...props.autocomplete.getLabelProps()}

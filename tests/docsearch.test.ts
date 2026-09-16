@@ -87,6 +87,31 @@ describe('docsearch', () => {
     expect(document.querySelector('.DocSearch-Modal')).toBeNull()
   })
 
+  it('closes from the modal close button and backdrop', async () => {
+    document.body.innerHTML = '<div id="docsearch"></div>'
+    const instance = docsearch({
+      appId: 'app',
+      apiKey: 'key',
+      container: '#docsearch',
+      indices: ['docs']
+    })
+    instances.push(instance)
+
+    instance.open()
+    await nextTick()
+    document.querySelector<HTMLButtonElement>('.DocSearch-Close')!.click()
+    await nextTick()
+    expect(instance.isOpen).toBe(false)
+
+    instance.open()
+    await nextTick()
+    document
+      .querySelector<HTMLElement>('.DocSearch-Container')!
+      .dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    await nextTick()
+    expect(instance.isOpen).toBe(false)
+  })
+
   it('renders grouped DocSearch 5 results through autocomplete-core', async () => {
     document.body.innerHTML = '<div id="docsearch"></div>'
     const instance = docsearch({

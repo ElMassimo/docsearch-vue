@@ -27,6 +27,10 @@ test('replaces VitePress DocSearch with the Vue implementation', async ({
     'true'
   )
 
+  await page.locator('.DocSearch-Input').press('Shift+Tab')
+  await expect(page.getByRole('link', { name: /Powered by Algolia/i })).toBeFocused()
+
+  await page.locator('.DocSearch-Input').focus()
   await page.locator('.DocSearch-Input').press('Enter')
   await expect(page).toHaveURL(/\/guide\/getting-started(?:\.html)?$/)
   await expect(page.getByRole('heading', { name: 'Getting Started' })).toBeVisible()

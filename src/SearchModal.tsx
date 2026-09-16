@@ -14,6 +14,7 @@ import type {
   DocSearchTransformClient,
   NormalizedDocSearchOptions
 } from './types'
+import { useModalEnvironment } from './useModalEnvironment'
 
 const initialState: AutocompleteState<DocSearchHit> = {
   activeItemId: null,
@@ -48,7 +49,11 @@ export const SearchModal = defineComponent({
   },
   setup(props) {
     const state = shallowRef(initialState)
+    const container = ref<HTMLDivElement | null>(null)
+    const dropdown = ref<HTMLDivElement | null>(null)
+    const form = ref<HTMLFormElement | null>(null)
     const input = ref<HTMLInputElement | null>(null)
+    const modal = ref<HTMLDivElement | null>(null)
     const searchClient = createSearchClient(props.options)
 
     const autocomplete = createAutocomplete<
@@ -138,11 +143,17 @@ export const SearchModal = defineComponent({
       }
     })
 
+    useModalEnvironment(
+      autocomplete,
+      { container, dropdown, form, input, modal },
+      props.options.environment ?? window
+    )
     onMounted(() => input.value?.focus())
 
     return () => (
       <div
         {...autocomplete.getRootProps({ 'aria-expanded': true })}
+        ref={container}
         class={[
           'DocSearch',
           'DocSearch-Container',
@@ -155,10 +166,11 @@ export const SearchModal = defineComponent({
           if (event.target === event.currentTarget) props.onClose()
         }}
       >
-        <div class="DocSearch-Modal" role="dialog" aria-modal="true">
+        <div ref={modal} class="DocSearch-Modal" role="dialog" aria-modal="true">
           <header class="DocSearch-SearchBar">
             <SearchBox
               autocomplete={autocomplete}
+              form={form}
               input={input}
               onClose={props.onClose}
               placeholder={props.options.placeholder ?? 'Search docs'}
@@ -166,7 +178,7 @@ export const SearchModal = defineComponent({
             />
           </header>
 
-          <div class="DocSearch-Dropdown">
+          <div ref={dropdown} class="DocSearch-Dropdown">
             <ScreenState autocomplete={autocomplete} state={state.value} />
           </div>
 
