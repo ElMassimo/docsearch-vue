@@ -46,6 +46,35 @@ docsearch({
 
 The returned instance exposes `open()`, `close()`, `destroy()`, `isOpen`, and `isReady`.
 
+### Keyword-search customization
+
+```ts
+import { h } from 'vue'
+
+docsearch({
+  container: '#docsearch',
+  appId: 'YOUR_APP_ID',
+  apiKey: 'YOUR_SEARCH_API_KEY',
+  indices: ['docs'],
+  facets: [
+    { key: 'language', label: 'Language' },
+    { key: 'version', label: 'Version' }
+  ],
+  theme: 'dark',
+  resultBadgeKey: 'version',
+  insights: true,
+  keyboardShortcuts: { '/': false },
+  hitComponent({ hit, children }) {
+    return h('a', { href: hit.url }, children)
+  },
+  resultsFooterComponent({ state }) {
+    return h('a', { href: `/search?q=${state.query}` }, 'See all results')
+  }
+})
+```
+
+Custom renderers return Vue VNodes. The narrow anchor VNode emitted by VitePress is also adapted automatically.
+
 ## Replace VitePress DocSearch
 
 VitePress loads `@docsearch/js` and `@docsearch/css` dynamically. Alias both modules to this package:
@@ -84,9 +113,9 @@ The compatibility adapter converts VitePress's legacy `indexName` and `searchPar
 - Hierarchical hits, highlighting, snippets, result badges, and keyboard navigation
 - Loading, error, empty, no-results, and result screens
 - Recent and pinned searches with optional personalization disablement
-- Focus trapping, global shortcuts, mobile viewport handling, and focus restoration
-- Light and dark themes plus DocSearch translations
-- Lifecycle callbacks, `transformItems`, `transformSearchClient`, custom navigation, and missing-results links
+- Focus trapping, configurable global shortcuts, mobile viewport handling, and focus restoration
+- Light and dark themes, custom portal containers, and DocSearch translations
+- Lifecycle callbacks, Algolia Insights, `transformItems`, `transformSearchClient`, custom navigation, and missing-results links
 - Vue hit renderers, result footer content, footer actions, and VitePress's anchor renderer
 - VitePress's legacy Algolia option shape
 
