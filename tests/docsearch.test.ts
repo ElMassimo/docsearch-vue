@@ -464,6 +464,47 @@ describe('docsearch', () => {
     expect(document.querySelector('.DocSearch-Chip')?.textContent).toContain('Fr')
   })
 
+  it('does not show no-results while a search is loading', async () => {
+    document.body.innerHTML = '<div id="docsearch"></div>'
+    let resolveSearch!: (value: unknown) => void
+    const instance = docsearch({
+      appId: 'app',
+      apiKey: 'key',
+      container: '#docsearch',
+      indices: ['docs'],
+      transformSearchClient(searchClient) {
+        return {
+          ...searchClient,
+          search() {
+            return new Promise((resolve) => {
+              resolveSearch = resolve
+            }) as never
+          }
+        }
+      }
+    })
+    instances.push(instance)
+    instance.open()
+    await nextTick()
+
+    const input = document.querySelector<HTMLInputElement>('.DocSearch-Input')!
+    input.value = 'pending'
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+    await nextTick()
+
+    expect(document.querySelector('.DocSearch-NoResults')).toBeNull()
+    expect(document.querySelector('.DocSearch-Dropdown-Container')?.getAttribute(
+      'aria-busy'
+    )).toBe('true')
+
+    resolveSearch({
+      results: [{ index: 'docs', hits: [], nbHits: 0, nbPages: 0, page: 0 }]
+    })
+    await expect
+      .poll(() => document.querySelector('.DocSearch-NoResults')?.textContent)
+      .toContain('pending')
+  })
+
   it('shows the DocSearch 5 no-results state for an empty response', async () => {
     document.body.innerHTML = '<div id="docsearch"></div>'
     const instance = docsearch({

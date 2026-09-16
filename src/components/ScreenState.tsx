@@ -85,6 +85,12 @@ export function ScreenState(props: ScreenStateProps) {
   if (!props.state.query && !hasResults) {
     return <div class="DocSearch-Dropdown-Container" />
   }
+  if (
+    !hasResults &&
+    (props.state.status === 'loading' || props.state.status === 'stalled')
+  ) {
+    return <div class="DocSearch-Dropdown-Container" aria-busy="true" />
+  }
   if (!hasResults) {
     return (
       <NoResults
