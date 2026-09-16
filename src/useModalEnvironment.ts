@@ -13,9 +13,11 @@ interface ModalEnvironmentRefs {
 export function useModalEnvironment(
   autocomplete: DocSearchAutocomplete,
   refs: ModalEnvironmentRefs,
-  environment: Window
+  environment: Window,
+  theme?: 'dark' | 'light'
 ): void {
   const initialScrollY = environment.scrollY
+  const initialTheme = environment.document.documentElement.dataset.theme
   let removeTouchEvents = () => {}
 
   function trapFocus(event: KeyboardEvent): void {
@@ -48,6 +50,7 @@ export function useModalEnvironment(
 
   onMounted(() => {
     const { input, form, dropdown, container } = refs
+    if (theme) environment.document.documentElement.dataset.theme = theme
     if (input.value && form.value && dropdown.value) {
       const { onTouchMove, onTouchStart } = autocomplete.getEnvironmentProps({
         inputElement: input.value,
@@ -76,6 +79,13 @@ export function useModalEnvironment(
     refs.container.value?.removeEventListener('keydown', trapFocus)
     environment.removeEventListener('resize', setViewportHeight)
     environment.document.body.style.marginInlineEnd = ''
+    if (theme) {
+      if (initialTheme === undefined) {
+        delete environment.document.documentElement.dataset.theme
+      } else {
+        environment.document.documentElement.dataset.theme = initialTheme
+      }
+    }
     if (environment.scrollY !== initialScrollY) {
       environment.scrollTo?.(0, initialScrollY)
     }

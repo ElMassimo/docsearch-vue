@@ -32,6 +32,7 @@ export function normalizeOptions(
     apiKey: options.apiKey,
     container: options.container,
     environment: options.environment,
+    theme: options.theme,
     placeholder: options.placeholder,
     initialQuery: options.initialQuery,
     onReady: options.onReady,

@@ -135,6 +135,7 @@ interface CommonDocSearchOptions {
   apiKey: string
   container: HTMLElement | string
   environment?: Window
+  theme?: 'dark' | 'light'
   placeholder?: string
   initialQuery?: string
   onReady?: () => void

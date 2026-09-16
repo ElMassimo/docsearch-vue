@@ -10,6 +10,7 @@ afterEach(() => {
     instance.destroy()
   }
   document.body.innerHTML = ''
+  delete document.documentElement.dataset.theme
 })
 
 describe('docsearch', () => {
@@ -133,6 +134,27 @@ describe('docsearch', () => {
     instance.close()
     await nextTick()
     expect(onClose).toHaveBeenCalledOnce()
+  })
+
+  it('applies the configured theme while the modal is open', async () => {
+    document.body.innerHTML = '<div id="docsearch"></div>'
+    document.documentElement.dataset.theme = 'light'
+    const instance = docsearch({
+      appId: 'app',
+      apiKey: 'key',
+      container: '#docsearch',
+      indices: ['docs'],
+      theme: 'dark'
+    })
+    instances.push(instance)
+
+    instance.open()
+    await nextTick()
+    expect(document.documentElement.dataset.theme).toBe('dark')
+
+    instance.close()
+    await nextTick()
+    expect(document.documentElement.dataset.theme).toBe('light')
   })
 
   it('opens, closes, and destroys the teleported modal', async () => {

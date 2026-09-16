@@ -42,7 +42,8 @@ export const SearchModal = defineComponent({
     useModalEnvironment(
       autocomplete,
       { container, dropdown, form, input, modal },
-      environment
+      environment,
+      props.options.theme
     )
     onMounted(() => input.value?.focus())
 
