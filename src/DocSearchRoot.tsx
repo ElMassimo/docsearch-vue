@@ -1,6 +1,10 @@
 import {
   defineComponent,
+  onMounted,
+  onUnmounted,
+  ref,
   Teleport,
+  watch,
   type Ref,
   type ShallowRef
 } from 'vue'
@@ -15,11 +19,51 @@ export function createDocSearchRoot(
   return defineComponent({
     name: 'DocSearchRoot',
     setup() {
+      const searchButton = ref<HTMLButtonElement | null>(null)
+      const environment = options.value.environment ?? window
+
+      function isEditingContent(event: KeyboardEvent): boolean {
+        const element = event.target as HTMLElement | null
+        const tagName = element?.tagName
+
+        return Boolean(
+          element?.isContentEditable ||
+            tagName === 'INPUT' ||
+            tagName === 'SELECT' ||
+            tagName === 'TEXTAREA'
+        )
+      }
+
+      function onKeyDown(event: KeyboardEvent): void {
+        const toggleShortcut =
+          event.key?.toLowerCase() === 'k' && (event.metaKey || event.ctrlKey)
+        const openSlashShortcut =
+          event.key === '/' && !isOpen.value && !isEditingContent(event)
+        const closeShortcut = event.key === 'Escape' && isOpen.value
+
+        if (!toggleShortcut && !openSlashShortcut && !closeShortcut) return
+
+        event.preventDefault()
+        isOpen.value = closeShortcut ? false : !isOpen.value
+      }
+
+      watch(isOpen, (open) => {
+        environment.document.body.classList.toggle('DocSearch--active', open)
+        if (!open) searchButton.value?.focus()
+      })
+
+      onMounted(() => environment.addEventListener('keydown', onKeyDown))
+      onUnmounted(() => {
+        environment.removeEventListener('keydown', onKeyDown)
+        environment.document.body.classList.remove('DocSearch--active')
+      })
+
       return () => (
         <>
           <button
             type="button"
             class="DocSearch DocSearch-Button"
+            ref={searchButton}
             aria-label="Search"
             onClick={() => {
               isOpen.value = true

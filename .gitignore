@@ -1,8 +1,10 @@
 node_modules/
 dist/
 coverage/
-.vitepress/cache/
-.vitepress/dist/
+test-results/
+playwright-report/
+**/.vitepress/cache/
+**/.vitepress/dist/
 .env
 .env.*
 !.env.example

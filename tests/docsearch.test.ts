@@ -62,6 +62,31 @@ describe('docsearch', () => {
     expect(document.querySelector('.DocSearch-Button')).toBeNull()
   })
 
+  it('opens from VitePress keyboard polling and closes with Escape', async () => {
+    document.body.innerHTML = '<div id="docsearch"></div>'
+    const instance = docsearch({
+      appId: 'app',
+      apiKey: 'key',
+      container: '#docsearch',
+      indices: ['docs']
+    })
+    instances.push(instance)
+
+    window.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'k', metaKey: true })
+    )
+    await nextTick()
+
+    expect(instance.isOpen).toBe(true)
+    expect(document.querySelector('.DocSearch-Modal')).not.toBeNull()
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+    await nextTick()
+
+    expect(instance.isOpen).toBe(false)
+    expect(document.querySelector('.DocSearch-Modal')).toBeNull()
+  })
+
   it('renders grouped DocSearch 5 results through autocomplete-core', async () => {
     document.body.innerHTML = '<div id="docsearch"></div>'
     const instance = docsearch({

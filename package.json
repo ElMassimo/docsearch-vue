@@ -19,6 +19,8 @@
     "build": "vite build && tsc -p tsconfig.build.json",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
+    "test:vitepress": "vitepress build fixtures/vitepress",
+    "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -30,9 +32,11 @@
   },
   "devDependencies": {
     "@docsearch/css": "5.1.0",
+    "@playwright/test": "1.63.0",
     "jsdom": "25.0.1",
     "typescript": "5.7.3",
     "vite": "5.4.14",
+    "vitepress": "1.6.4",
     "vitest": "2.1.9",
     "vue": "3.6.0-rc.8"
   },
