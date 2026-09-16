@@ -305,7 +305,7 @@ describe('docsearch', () => {
         { href: `/all?q=${state.query}` },
         'See all results'
       ),
-      footerAction: h('button', { type: 'button' }, 'Support'),
+      footerAction: () => h('button', { type: 'button' }, 'Support'),
       translations: {
         modal: {
           resultsScreen: { resultBadgeLabelText: 'Section' }

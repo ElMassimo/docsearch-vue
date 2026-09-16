@@ -20,9 +20,10 @@ export function Footer({
   action,
   translations = {}
 }: {
-  action?: VNodeChild
+  action?: VNodeChild | (() => VNodeChild)
   translations?: FooterTranslations
 }) {
+  const renderedAction = typeof action === 'function' ? action() : action
   const {
     navigateText = 'Navigate',
     selectText = 'Select',
@@ -48,7 +49,9 @@ export function Footer({
         </li>
       </ul>
       <div class="DocSearch-Footer-Actions">
-        {action ? <div class="DocSearch-Footer-Action">{action}</div> : null}
+        {renderedAction ? (
+          <div class="DocSearch-Footer-Action">{renderedAction}</div>
+        ) : null}
         <div class="DocSearch-Logo">
           <a
             href="https://www.algolia.com/ref/docsearch/"

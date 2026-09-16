@@ -167,7 +167,7 @@ interface CommonDocSearchOptions {
   resultBadgeKey?: string
   hitComponent?: HitComponent
   resultsFooterComponent?: ResultsFooterComponent
-  footerAction?: VNodeChild
+  footerAction?: VNodeChild | (() => VNodeChild)
   recentSearchesLimit?: number
   recentSearchesWithFavoritesLimit?: number
   navigator?: AutocompleteOptions<DocSearchHit>['navigator']
