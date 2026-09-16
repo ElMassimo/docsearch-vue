@@ -101,6 +101,11 @@ export interface DocSearchIndex {
   searchParameters?: SearchParamsObject
 }
 
+export interface DocSearchFacet {
+  key: string
+  label?: string
+}
+
 export interface HitComponentProps {
   hit: DocSearchHit
   children: VNodeChild
