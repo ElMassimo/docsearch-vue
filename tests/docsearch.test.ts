@@ -452,7 +452,9 @@ describe('docsearch', () => {
     expect(document.querySelector('.DocSearch-Hit-Tree')).not.toBeNull()
     expect(document.querySelectorAll('.DocSearch-Hit')).toHaveLength(2)
     expect(document.querySelector('.DocSearch-Dropdown-Container')).not.toBeNull()
-    expect(document.querySelector('.DocSearch-Hits-padded')).not.toBeNull()
+    expect(document.querySelector('.DocSearch-Hits-padded')?.id).toBe(
+      input?.getAttribute('aria-controls')
+    )
     expect(document.querySelector('.DocSearch-Clear')?.hasAttribute('hidden')).toBe(false)
     expect(document.querySelector('.DocSearch-Close')?.getAttribute('aria-label')).toBe('Close')
     expect(document.querySelector('.DocSearch-Footer')?.textContent).toContain('Navigate')
