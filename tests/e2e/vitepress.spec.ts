@@ -22,5 +22,13 @@ test('replaces VitePress DocSearch with the Vue implementation', async ({
   await expect(page.locator('.DocSearch-Hit-title')).toHaveText(
     'Getting Started'
   )
+  await expect(page.locator('.DocSearch-Hit')).toHaveAttribute(
+    'aria-selected',
+    'true'
+  )
+
+  await page.locator('.DocSearch-Input').press('Enter')
+  await expect(page).toHaveURL(/\/guide\/getting-started(?:\.html)?$/)
+  await expect(page.getByRole('heading', { name: 'Getting Started' })).toBeVisible()
   expect(errors).toEqual([])
 })

@@ -16,7 +16,12 @@ export function SearchBox(props: SearchBoxProps) {
   const formProps = props.autocomplete.getFormProps({
     inputElement: props.input.value
   })
-  const { onChange, ...inputProps } = props.autocomplete.getInputProps({
+  const {
+    onChange,
+    onCompositionEnd,
+    onKeyDown,
+    ...inputProps
+  } = props.autocomplete.getInputProps({
     inputElement: props.input.value,
     maxLength: 64,
     placeholder: props.placeholder
@@ -39,6 +44,8 @@ export function SearchBox(props: SearchBoxProps) {
         ref={props.input}
         {...inputProps}
         onInput={onChange}
+        onCompositionend={onCompositionEnd}
+        onKeydown={onKeyDown}
       />
 
       <div class="DocSearch-Actions">
