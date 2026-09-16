@@ -14,6 +14,7 @@ test('replaces VitePress DocSearch with the Vue implementation', async ({
 
   const modal = page.locator('.DocSearch-Modal')
   await expect(modal).toBeVisible()
+  await expect(modal).toHaveCSS('max-width', '800px')
 
   await page.locator('.DocSearch-Input').fill('getting')
 
