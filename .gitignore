@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+test-results/
+playwright-report/
+.claude/worktrees/
+**/.vitepress/cache/
+**/.vitepress/dist/
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log

@@ -1,0 +1,126 @@
+# @mussi/docsearch-vue
+
+A Vue 3 implementation of the [DocSearch 5](https://docsearch.algolia.com/) keyword-search experience. It preserves DocSearch's `.DocSearch-*` markup and styles and can replace the DocSearch integration bundled with VitePress.
+
+This package does not depend on React, Preact, `@docsearch/react`, or the DocSearch AI runtime.
+
+## Install
+
+```sh
+pnpm add @mussi/docsearch-vue vue
+```
+
+Vue `3.5.13` or newer is required. Vue `3.6.0-rc.8` is supported.
+
+## Use directly
+
+```ts
+import docsearch from '@mussi/docsearch-vue'
+import '@mussi/docsearch-vue/style'
+
+const search = docsearch({
+  container: '#docsearch',
+  appId: 'YOUR_APP_ID',
+  apiKey: 'YOUR_SEARCH_API_KEY',
+  indices: ['YOUR_INDEX_NAME']
+})
+
+search.open()
+```
+
+`indices` also accepts index-specific search parameters:
+
+```ts
+docsearch({
+  container: '#docsearch',
+  appId: 'YOUR_APP_ID',
+  apiKey: 'YOUR_SEARCH_API_KEY',
+  indices: [
+    {
+      name: 'docs',
+      searchParameters: { facetFilters: ['language:en'] }
+    }
+  ]
+})
+```
+
+The returned instance exposes `open()`, `close()`, `destroy()`, `isOpen`, and `isReady`.
+
+### Keyword-search customization
+
+```ts
+import { h } from 'vue'
+
+docsearch({
+  container: '#docsearch',
+  appId: 'YOUR_APP_ID',
+  apiKey: 'YOUR_SEARCH_API_KEY',
+  indices: ['docs'],
+  facets: [
+    { key: 'language', label: 'Language' },
+    { key: 'version', label: 'Version' }
+  ],
+  theme: 'dark',
+  resultBadgeKey: 'version',
+  insights: true,
+  keyboardShortcuts: { '/': false },
+  hitComponent({ hit, children }) {
+    return h('a', { href: hit.url }, children)
+  },
+  resultsFooterComponent({ state }) {
+    return h('a', { href: `/search?q=${state.query}` }, 'See all results')
+  }
+})
+```
+
+Custom renderers return Vue VNodes. The narrow anchor VNode emitted by VitePress is also adapted automatically.
+
+## Replace VitePress DocSearch
+
+VitePress loads `@docsearch/js` and `@docsearch/css` dynamically. Alias both modules to this package:
+
+```ts
+// docs/.vitepress/config.ts
+import { defineConfig } from 'vitepress'
+
+export default defineConfig({
+  vite: {
+    resolve: {
+      alias: {
+        '@docsearch/js': '@mussi/docsearch-vue',
+        '@docsearch/css': '@mussi/docsearch-vue/style'
+      }
+    }
+  },
+  themeConfig: {
+    search: {
+      provider: 'algolia',
+      options: {
+        appId: 'YOUR_APP_ID',
+        apiKey: 'YOUR_SEARCH_API_KEY',
+        indexName: 'YOUR_INDEX_NAME'
+      }
+    }
+  }
+})
+```
+
+The compatibility adapter converts VitePress's legacy `indexName` and `searchParameters` options into the DocSearch 5 `indices` format.
+
+## Supported experience
+
+- DocSearch 5 keyword search, multi-index queries, and facet controls
+- Hierarchical hits, highlighting, snippets, result badges, and keyboard navigation
+- Loading, error, empty, no-results, and result screens
+- Recent and pinned searches with optional personalization disablement
+- Focus trapping, configurable global shortcuts, mobile viewport handling, and focus restoration
+- Light and dark themes, custom portal containers, and DocSearch translations
+- Lifecycle callbacks, Algolia Insights, `transformItems`, `transformSearchClient`, custom navigation, and missing-results links
+- Vue hit renderers, result footer content, footer actions, and VitePress's anchor renderer
+- VitePress's legacy Algolia option shape
+
+Ask AI, side panels, local search, and React/Preact component exports are intentionally outside this package's scope.
+
+## License
+
+MIT. See [NOTICE](./NOTICE) for third-party attribution.

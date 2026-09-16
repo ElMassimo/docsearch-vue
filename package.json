@@ -1,0 +1,58 @@
+{
+  "name": "@mussi/docsearch-vue",
+  "version": "0.1.0",
+  "description": "A Vue implementation of the DocSearch 5 keyword-search experience",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "NOTICE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./style": "./dist/style.css"
+  },
+  "scripts": {
+    "build": "vite build && tsc -p tsconfig.build.json",
+    "check:bundle": "node scripts/check-bundle.mjs",
+    "check:package": "node scripts/check-package.mjs",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "test:vitepress": "pnpm build && vitepress build fixtures/vitepress",
+    "test:e2e": "playwright test",
+    "typecheck": "tsc --noEmit",
+    "verify": "pnpm typecheck && pnpm test && pnpm test:vitepress && pnpm check:bundle && pnpm check:package"
+  },
+  "dependencies": {
+    "@algolia/autocomplete-core": "1.19.2",
+    "algoliasearch": "5.28.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.13 || >=3.6.0-rc.8 <4"
+  },
+  "devDependencies": {
+    "@docsearch/css": "5.1.0",
+    "@playwright/test": "1.63.0",
+    "jsdom": "25.0.1",
+    "typescript": "5.7.3",
+    "vite": "5.4.14",
+    "vitepress": "1.6.4",
+    "vitest": "2.1.9",
+    "vue": "3.6.0-rc.8"
+  },
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=18"
+  }
+}
