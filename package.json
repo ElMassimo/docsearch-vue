@@ -1,6 +1,6 @@
 {
   "name": "@mussi/docsearch-vue",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A Vue implementation of the DocSearch 5 keyword-search experience",
   "license": "MIT",
   "type": "module",
@@ -9,8 +9,13 @@
   ],
   "files": [
     "dist",
-    "NOTICE"
+    "NOTICE",
+    "CHANGELOG.md"
   ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -24,7 +29,8 @@
     "test:watch": "vitest",
     "test:vitepress": "pnpm build && vitepress build fixtures/vitepress",
     "test:e2e": "playwright test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "verify": "pnpm typecheck && pnpm test && pnpm test:vitepress"
   },
   "dependencies": {
     "@algolia/autocomplete-core": "1.19.2",

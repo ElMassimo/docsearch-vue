@@ -6,6 +6,7 @@ import type { SearchResponse } from 'algoliasearch/lite'
 import { liteClient } from 'algoliasearch/lite'
 import { computed, onMounted, ref, shallowRef } from 'vue'
 
+import packageMetadata from '../package.json'
 import {
   createFacetFilters,
   deriveFacetSelections,
@@ -40,7 +41,7 @@ function createSearchClient(
   options: NormalizedDocSearchOptions
 ): DocSearchTransformClient {
   const client = liteClient(options.appId, options.apiKey)
-  client.addAlgoliaAgent('docsearch-vue', '0.0.0')
+  client.addAlgoliaAgent('docsearch-vue', packageMetadata.version)
   return options.transformSearchClient?.(client) ?? client
 }
 
