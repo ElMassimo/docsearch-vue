@@ -177,7 +177,13 @@ export function useDocSearchAutocomplete(
               'hierarchy.lvl3', 'hierarchy.lvl4', 'hierarchy.lvl5',
               'hierarchy.lvl6', 'content', 'type', 'url'
             ],
-            attributesToSnippet: ['content:10'],
+            attributesToSnippet: [
+              'hierarchy.lvl1:10', 'hierarchy.lvl2:10',
+              'hierarchy.lvl3:10', 'hierarchy.lvl4:10',
+              'hierarchy.lvl5:10', 'hierarchy.lvl6:10',
+              'content:10'
+            ],
+            snippetEllipsisText: '…',
             highlightPreTag: '<mark>',
             highlightPostTag: '</mark>',
             hitsPerPage: 20,

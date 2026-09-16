@@ -430,6 +430,9 @@ describe('docsearch', () => {
       'query-1'
     )
     expect(requests.at(-1)?.[0]?.clickAnalytics).toBe(true)
+    expect(requests.at(-1)?.[0]?.attributesToSnippet).toContain(
+      'hierarchy.lvl1:10'
+    )
     expect(document.querySelector('.DocSearch-Hit-badge')?.textContent).toContain(
       'Section: Tutorial'
     )
