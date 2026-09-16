@@ -80,12 +80,14 @@ The compatibility adapter converts VitePress's legacy `indexName` and `searchPar
 
 ## Supported experience
 
-- DocSearch 5 keyword search and multi-index queries
-- Hierarchical hits, highlighting, snippets, and keyboard navigation
+- DocSearch 5 keyword search, multi-index queries, and facet controls
+- Hierarchical hits, highlighting, snippets, result badges, and keyboard navigation
 - Loading, error, empty, no-results, and result screens
 - Recent and pinned searches with optional personalization disablement
 - Focus trapping, global shortcuts, mobile viewport handling, and focus restoration
-- DocSearch translations, lifecycle callbacks, `transformItems`, `transformSearchClient`, custom navigation, and missing-results links
+- Light and dark themes plus DocSearch translations
+- Lifecycle callbacks, `transformItems`, `transformSearchClient`, custom navigation, and missing-results links
+- Vue hit renderers, result footer content, footer actions, and VitePress's anchor renderer
 - VitePress's legacy Algolia option shape
 
 Ask AI, side panels, local search, and React/Preact component exports are intentionally outside this package's scope.
