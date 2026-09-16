@@ -356,7 +356,7 @@ describe('docsearch', () => {
                       _highlightResult: {
                         hierarchy: {
                           lvl1: {
-                            value: 'Getting <mark>Started</mark><img src=x>'
+                            value: 'Getting <mark>Started</mark> &amp; Setup<img src=x>'
                           }
                         }
                       }
@@ -412,7 +412,7 @@ describe('docsearch', () => {
       .poll(
         () => document.querySelector('.DocSearch-Hit-title')?.textContent
       )
-      .toBe('Getting Started')
+      .toBe('Getting Started & Setup')
     expect(document.querySelector('.DocSearch-Hit-source')?.textContent).toBe(
       'Guide'
     )

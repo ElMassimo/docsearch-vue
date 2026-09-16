@@ -33,6 +33,20 @@ function getNestedValue(hit: DocSearchHit, path: string): unknown {
   }, hit)
 }
 
+function decodeHtmlEntities(value: string): string {
+  return value.replace(
+    /&(?:amp|lt|gt|quot|#39|#x27);/gi,
+    (entity) => ({
+      '&amp;': '&',
+      '&lt;': '<',
+      '&gt;': '>',
+      '&quot;': '"',
+      '&#39;': "'",
+      '&#x27;': "'"
+    })[entity.toLowerCase()] ?? entity
+  )
+}
+
 function safeHighlight(value: unknown, fallback: string): VNodeChild {
   if (typeof value !== 'string') return fallback
 
@@ -42,7 +56,7 @@ function safeHighlight(value: unknown, fallback: string): VNodeChild {
     if (segment === '<mark>') highlighted = true
     else if (segment === '</mark>') highlighted = false
     else {
-      const text = segment.replace(/<[^>]*>/g, '')
+      const text = decodeHtmlEntities(segment.replace(/<[^>]*>/g, ''))
       if (text) output.push(highlighted ? h('mark', text) : text)
     }
   }
