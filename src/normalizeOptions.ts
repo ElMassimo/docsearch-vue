@@ -31,6 +31,8 @@ export function normalizeOptions(
     appId: options.appId,
     apiKey: options.apiKey,
     container: options.container,
+    environment: options.environment,
+    placeholder: options.placeholder,
     indices
   }
 }

@@ -9,6 +9,8 @@ interface CommonDocSearchOptions {
   appId: string
   apiKey: string
   container: HTMLElement | string
+  environment?: Window
+  placeholder?: string
 }
 
 export type NativeDocSearchOptions = CommonDocSearchOptions & {

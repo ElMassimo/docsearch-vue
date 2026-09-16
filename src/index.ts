@@ -1,3 +1,5 @@
+export { default } from './docsearch'
+export type { DocSearchInstance } from './docsearch'
 export { normalizeOptions } from './normalizeOptions'
 export type {
   DocSearchIndex,
