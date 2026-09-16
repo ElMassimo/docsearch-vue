@@ -171,6 +171,7 @@ interface CommonDocSearchOptions {
   recentSearchesLimit?: number
   recentSearchesWithFavoritesLimit?: number
   navigator?: AutocompleteOptions<DocSearchHit>['navigator']
+  insights?: AutocompleteOptions<DocSearchHit>['insights']
   transformItems?: (items: DocSearchHit[]) => DocSearchHit[]
   transformSearchClient?: (
     searchClient: DocSearchTransformClient

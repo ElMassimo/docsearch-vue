@@ -138,6 +138,7 @@ export function useDocSearchAutocomplete(
     defaultActiveItemId: 0,
     openOnFocus: true,
     navigator: options.navigator,
+    insights: Boolean(options.insights),
     initialState: { query: options.initialQuery ?? '', context: {} },
     onStateChange({ state: nextState }) {
       state.value = nextState
@@ -180,6 +181,8 @@ export function useDocSearchAutocomplete(
             highlightPreTag: '<mark>',
             highlightPostTag: '</mark>',
             hitsPerPage: 20,
+            clickAnalytics:
+              index.searchParameters?.clickAnalytics ?? Boolean(options.insights),
             ...index.searchParameters,
             facetFilters: createFacetFilters(
               index.searchParameters?.facetFilters,
@@ -211,7 +214,15 @@ export function useDocSearchAutocomplete(
             },
             getItems: () => addParents(
               items.slice(0, options.maxResultsPerGroup || 5)
-            )
+            ).map((item) => options.insights ? {
+              ...item,
+              __autocomplete_indexName: response.index,
+              __autocomplete_queryID: response.queryID,
+              __autocomplete_algoliaCredentials: {
+                appId: options.appId,
+                apiKey: options.apiKey
+              }
+            } : item)
           }))
         })
 

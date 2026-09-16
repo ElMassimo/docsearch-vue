@@ -53,6 +53,7 @@ export function normalizeOptions(
     recentSearchesWithFavoritesLimit:
       options.recentSearchesWithFavoritesLimit,
     navigator: options.navigator,
+    insights: options.insights,
     transformItems: options.transformItems,
     transformSearchClient: options.transformSearchClient,
     indices

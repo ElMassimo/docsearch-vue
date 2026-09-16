@@ -291,12 +291,14 @@ describe('docsearch', () => {
 
   it('renders grouped DocSearch 5 results through autocomplete-core', async () => {
     document.body.innerHTML = '<div id="docsearch"></div>'
+    const requests: Array<Array<Record<string, unknown>>> = []
     const instance = docsearch({
       appId: 'app',
       apiKey: 'key',
       container: '#docsearch',
       indices: ['docs'],
       maxResultsPerGroup: 2,
+      insights: true,
       resultBadgeKey: 'metadata.category',
       resultsFooterComponent: ({ state }) => h(
         'a',
@@ -319,7 +321,8 @@ describe('docsearch', () => {
           props: {
             href: hit.url,
             children,
-            'data-vitepress-hit': 'true'
+            'data-vitepress-hit': 'true',
+            'data-query-id': hit.__autocomplete_queryID
           }
         }
       },
@@ -331,11 +334,15 @@ describe('docsearch', () => {
       transformSearchClient(searchClient) {
         return {
           ...searchClient,
-          async search() {
+          async search(params) {
+            requests.push((params as {
+              requests: Array<Record<string, unknown>>
+            }).requests)
             return {
               results: [
                 {
                   index: 'docs',
+                  queryID: 'query-1',
                   hits: [
                     {
                       objectID: 'getting-started',
@@ -419,6 +426,10 @@ describe('docsearch', () => {
     expect(document.querySelector('.DocSearch-Hit a')?.getAttribute('data-vitepress-hit')).toBe(
       'true'
     )
+    expect(document.querySelector('.DocSearch-Hit a')?.getAttribute('data-query-id')).toBe(
+      'query-1'
+    )
+    expect(requests.at(-1)?.[0]?.clickAnalytics).toBe(true)
     expect(document.querySelector('.DocSearch-Hit-badge')?.textContent).toContain(
       'Section: Tutorial'
     )
