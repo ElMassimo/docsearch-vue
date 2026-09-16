@@ -224,6 +224,11 @@ describe('docsearch', () => {
       container: '#docsearch',
       indices: ['docs'],
       maxResultsPerGroup: 2,
+      navigator: {
+        navigate: vi.fn(),
+        navigateNewTab: vi.fn(),
+        navigateNewWindow: vi.fn()
+      },
       transformSearchClient(searchClient) {
         return {
           ...searchClient,
@@ -320,6 +325,20 @@ describe('docsearch', () => {
     expect(document.querySelector('.DocSearch-Close')?.getAttribute('aria-label')).toBe('Close')
     expect(document.querySelector('.DocSearch-Footer')?.textContent).toContain('Navigate')
     expect(document.querySelector('.DocSearch-Footer')?.textContent).toContain('Select')
+
+    const resultLink = document.querySelector<HTMLAnchorElement>('.DocSearch-Hit a')!
+    resultLink.addEventListener('click', (event) => event.preventDefault())
+    resultLink.dispatchEvent(new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      ctrlKey: true
+    }))
+    await nextTick()
+    expect(instance.isOpen).toBe(true)
+
+    resultLink.click()
+    await nextTick()
+    expect(instance.isOpen).toBe(false)
   })
 
   it('shows the DocSearch 5 no-results state for an empty response', async () => {

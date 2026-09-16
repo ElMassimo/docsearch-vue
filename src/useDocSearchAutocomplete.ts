@@ -22,6 +22,17 @@ function createSearchClient(
   return options.transformSearchClient?.(client) ?? client
 }
 
+function isModifierEvent(event: Event): boolean {
+  const modifiedEvent = event as MouseEvent | KeyboardEvent
+  return (
+    (modifiedEvent as MouseEvent).button === 1 ||
+    modifiedEvent.altKey ||
+    modifiedEvent.ctrlKey ||
+    modifiedEvent.metaKey ||
+    modifiedEvent.shiftKey
+  )
+}
+
 function addParents(items: DocSearchHit[]): DocSearchHit[] {
   return items.map((item) => ({
     ...item,
@@ -100,13 +111,17 @@ export function useDocSearchAutocomplete(
             sourceId: 'favoriteSearches',
             getItemUrl: ({ item }) => item.url,
             getItems: () => favoriteSearches.getAll(),
-            onSelect: onClose
+            onSelect: ({ event }) => {
+              if (!isModifierEvent(event)) onClose()
+            }
           },
           {
             sourceId: 'recentSearches',
             getItemUrl: ({ item }) => item.url,
             getItems: () => recentSearches.getAll(),
-            onSelect: onClose
+            onSelect: ({ event }) => {
+              if (!isModifierEvent(event)) onClose()
+            }
           }
         ]
       }
@@ -142,9 +157,9 @@ export function useDocSearchAutocomplete(
           return Array.from(groupedHits, ([, items], groupIndex) => ({
             sourceId: `hits_${response.index ?? resultIndex}_${groupIndex}`,
             getItemUrl: ({ item }) => item.url,
-            onSelect({ item }) {
+            onSelect({ item, event }) {
               saveRecentSearch(item)
-              onClose()
+              if (!isModifierEvent(event)) onClose()
             },
             getItems: () => addParents(
               items.slice(0, options.maxResultsPerGroup || 5)
