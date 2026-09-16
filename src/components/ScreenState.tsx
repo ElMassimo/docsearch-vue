@@ -17,6 +17,7 @@ interface ScreenStateProps extends StoredSearchActions {
   translations?: ModalTranslations
   getMissingResultsUrl?: (params: { query: string }) => string
   hitComponent?: HitComponent
+  resultBadgeKey?: string
 }
 
 function NoResults({
@@ -96,6 +97,7 @@ export function ScreenState(props: ScreenStateProps) {
     <SearchResults
       {...props}
       translations={props.translations?.startScreen}
+      resultsTranslations={props.translations?.resultsScreen}
     />
   )
 }

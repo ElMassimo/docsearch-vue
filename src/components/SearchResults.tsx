@@ -6,6 +6,7 @@ import type {
   DocSearchHit,
   HierarchyLevel,
   HitComponent,
+  ResultsTranslations,
   StartScreenTranslations
 } from '../types'
 import { CloseIcon, PinIcon, SelectIcon, SourceIcon } from './Icons'
@@ -20,6 +21,8 @@ interface SearchResultsProps extends StoredSearchActions {
   autocomplete: DocSearchAutocomplete
   state: AutocompleteState<DocSearchHit>
   hitComponent?: HitComponent
+  resultBadgeKey?: string
+  resultsTranslations?: ResultsTranslations
   translations?: StartScreenTranslations
 }
 
@@ -116,6 +119,11 @@ export function SearchResults(props: SearchResultsProps) {
                       <span class="DocSearch-Hit-title">{hitTitle(item)}</span>
                       <span class="DocSearch-Hit-path">{breadcrumbs(item)}</span>
                     </div>
+                    <ResultBadge
+                      item={item}
+                      badgeKey={props.resultBadgeKey}
+                      translations={props.resultsTranslations}
+                    />
                     <StoredSearchAction
                       item={item}
                       isFavorite={isFavorite}
@@ -146,6 +154,36 @@ export function SearchResults(props: SearchResultsProps) {
           </section>
         )
       })}
+    </div>
+  )
+}
+
+function ResultBadge({
+  item,
+  badgeKey,
+  translations = {}
+}: {
+  item: DocSearchHit
+  badgeKey?: string
+  translations?: ResultsTranslations
+}) {
+  if (!badgeKey) return null
+
+  const value = getNestedValue(item, badgeKey)
+  const primitives = Array.isArray(value) ? value : [value]
+  const badge = primitives
+    .filter((part) => ['string', 'number', 'boolean'].includes(typeof part))
+    .map(String)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .join(', ')
+  if (!badge) return null
+
+  const label = translations.resultBadgeLabelText ?? 'Category'
+  return (
+    <div class="DocSearch-Hit-badge">
+      <span class="DocSearch-VisuallyHiddenForAccessibility">{label}: {badge}</span>
+      <span aria-hidden="true">{badge}</span>
     </div>
   )
 }

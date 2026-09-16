@@ -92,9 +92,14 @@ export interface FacetTranslations {
   clearFacetAriaLabel?: string
 }
 
+export interface ResultsTranslations {
+  resultBadgeLabelText?: string
+}
+
 export interface ModalTranslations {
   searchBox?: SearchBoxTranslations
   facets?: FacetTranslations
+  resultsScreen?: ResultsTranslations
   footer?: FooterTranslations
   noResultsScreen?: NoResultsTranslations
   errorScreen?: ErrorTranslations
@@ -146,6 +151,7 @@ interface CommonDocSearchOptions {
   disableUserPersonalization?: boolean
   facets?: DocSearchFacet[]
   maxResultsPerGroup?: number
+  resultBadgeKey?: string
   hitComponent?: HitComponent
   recentSearchesLimit?: number
   recentSearchesWithFavoritesLimit?: number

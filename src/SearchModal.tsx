@@ -97,6 +97,7 @@ export const SearchModal = defineComponent({
               translations={props.options.translations?.modal}
               getMissingResultsUrl={props.options.getMissingResultsUrl}
               hitComponent={props.options.hitComponent}
+              resultBadgeKey={props.options.resultBadgeKey}
               onFavorite={favorite}
               onRemoveFavorite={removeFavorite}
               onRemoveRecent={removeRecent}

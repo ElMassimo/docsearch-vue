@@ -20,6 +20,7 @@ export type {
   NativeDocSearchOptions,
   NoResultsTranslations,
   NormalizedDocSearchOptions,
+  ResultsTranslations,
   SearchBoxTranslations,
   StartScreenTranslations,
   VitePressDocSearchOptions,

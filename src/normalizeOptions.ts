@@ -43,6 +43,7 @@ export function normalizeOptions(
     disableUserPersonalization: options.disableUserPersonalization,
     facets: options.facets,
     maxResultsPerGroup: options.maxResultsPerGroup,
+    resultBadgeKey: options.resultBadgeKey,
     hitComponent: options.hitComponent,
     recentSearchesLimit: options.recentSearchesLimit,
     recentSearchesWithFavoritesLimit:

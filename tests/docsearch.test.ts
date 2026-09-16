@@ -246,6 +246,12 @@ describe('docsearch', () => {
       container: '#docsearch',
       indices: ['docs'],
       maxResultsPerGroup: 2,
+      resultBadgeKey: 'metadata.category',
+      translations: {
+        modal: {
+          resultsScreen: { resultBadgeLabelText: 'Section' }
+        }
+      },
       hitComponent({ hit, children }) {
         return {
           __v: null,
@@ -282,6 +288,7 @@ describe('docsearch', () => {
                         lvl0: 'Guide',
                         lvl1: 'Getting Started'
                       },
+                      metadata: { category: 'Tutorial' },
                       _highlightResult: {
                         hierarchy: {
                           lvl1: {
@@ -354,6 +361,9 @@ describe('docsearch', () => {
     expect(document.querySelector('.DocSearch-Hit-title img')).toBeNull()
     expect(document.querySelector('.DocSearch-Hit a')?.getAttribute('data-vitepress-hit')).toBe(
       'true'
+    )
+    expect(document.querySelector('.DocSearch-Hit-badge')?.textContent).toContain(
+      'Section: Tutorial'
     )
     expect(document.querySelector('.DocSearch-Hit--Child')).not.toBeNull()
     expect(document.querySelector('.DocSearch-Hit-Tree')).not.toBeNull()
