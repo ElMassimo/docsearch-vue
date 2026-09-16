@@ -1,5 +1,5 @@
 import { nextTick } from 'vue'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import docsearch from '../src'
 
@@ -79,6 +79,60 @@ describe('docsearch', () => {
     expect(document.querySelector('.DocSearch-Footer')?.textContent).toContain(
       'Naviguer'
     )
+  })
+
+  it('opens with an initial query and calls lifecycle callbacks', async () => {
+    document.body.innerHTML = '<div id="docsearch"></div>'
+    const onReady = vi.fn()
+    const onOpen = vi.fn()
+    const onClose = vi.fn()
+    const instance = docsearch({
+      appId: 'app',
+      apiKey: 'key',
+      container: '#docsearch',
+      indices: ['docs'],
+      initialQuery: 'getting',
+      onReady,
+      onOpen,
+      onClose,
+      transformSearchClient(searchClient) {
+        return {
+          ...searchClient,
+          async search() {
+            return {
+              results: [
+                {
+                  index: 'docs',
+                  hits: [],
+                  hitsPerPage: 20,
+                  nbHits: 0,
+                  nbPages: 0,
+                  page: 0,
+                  processingTimeMS: 1,
+                  exhaustiveNbHits: true,
+                  query: 'getting',
+                  params: ''
+                }
+              ]
+            } as never
+          }
+        }
+      }
+    })
+    instances.push(instance)
+
+    expect(onReady).toHaveBeenCalledOnce()
+    instance.open()
+    await nextTick()
+
+    expect(onOpen).toHaveBeenCalledOnce()
+    expect(document.querySelector<HTMLInputElement>('.DocSearch-Input')?.value).toBe(
+      'getting'
+    )
+
+    instance.close()
+    await nextTick()
+    expect(onClose).toHaveBeenCalledOnce()
   })
 
   it('opens, closes, and destroys the teleported modal', async () => {
@@ -263,6 +317,7 @@ describe('docsearch', () => {
       apiKey: 'key',
       container: '#docsearch',
       indices: ['docs'],
+      getMissingResultsUrl: ({ query }) => `/report?query=${query}`,
       transformSearchClient(searchClient) {
         return {
           ...searchClient,
@@ -300,6 +355,9 @@ describe('docsearch', () => {
       .toContain('No results found for')
     expect(document.querySelector('.DocSearch-NoResults')?.textContent).toContain(
       'missing'
+    )
+    expect(document.querySelector('.DocSearch-Help a')?.getAttribute('href')).toBe(
+      '/report?query=missing'
     )
   })
 

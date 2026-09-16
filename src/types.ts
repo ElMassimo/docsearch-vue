@@ -65,6 +65,8 @@ export interface FooterTranslations {
 
 export interface NoResultsTranslations {
   noResultsText?: string
+  reportMissingResultsText?: string
+  reportMissingResultsLinkText?: string
 }
 
 export interface StartScreenTranslations {
@@ -104,6 +106,11 @@ interface CommonDocSearchOptions {
   container: HTMLElement | string
   environment?: Window
   placeholder?: string
+  initialQuery?: string
+  onReady?: () => void
+  onOpen?: () => void
+  onClose?: () => void
+  getMissingResultsUrl?: (params: { query: string }) => string
   translations?: DocSearchTranslations
   disableUserPersonalization?: boolean
   recentSearchesLimit?: number

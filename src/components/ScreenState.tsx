@@ -14,16 +14,24 @@ interface ScreenStateProps extends StoredSearchActions {
   autocomplete: DocSearchAutocomplete
   state: AutocompleteState<DocSearchHit>
   translations?: ModalTranslations
+  getMissingResultsUrl?: (params: { query: string }) => string
 }
 
 function NoResults({
   query,
-  translations = {}
+  translations = {},
+  getMissingResultsUrl
 }: {
   query: string
   translations?: NoResultsTranslations
+  getMissingResultsUrl?: (params: { query: string }) => string
 }) {
   const noResultsText = translations.noResultsText ?? 'No results found for'
+  const reportText =
+    translations.reportMissingResultsText ??
+    'Believe this query should return results?'
+  const reportLinkText =
+    translations.reportMissingResultsLinkText ?? 'Let us know.'
 
   return (
     <div class="DocSearch-NoResults">
@@ -31,6 +39,18 @@ function NoResults({
       <p class="DocSearch-Title">
         {noResultsText} "<strong>{query}</strong>"
       </p>
+      {getMissingResultsUrl ? (
+        <p class="DocSearch-Help">
+          {reportText}{' '}
+          <a
+            href={getMissingResultsUrl({ query })}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {reportLinkText}
+          </a>
+        </p>
+      ) : null}
     </div>
   )
 }
@@ -65,6 +85,7 @@ export function ScreenState(props: ScreenStateProps) {
       <NoResults
         query={props.state.query}
         translations={props.translations?.noResultsScreen}
+        getMissingResultsUrl={props.getMissingResultsUrl}
       />
     )
   }

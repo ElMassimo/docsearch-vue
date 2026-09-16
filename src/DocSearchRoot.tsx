@@ -49,7 +49,12 @@ export function createDocSearchRoot(
 
       watch(isOpen, (open) => {
         environment.document.body.classList.toggle('DocSearch--active', open)
-        if (!open) searchButton.value?.focus()
+        if (open) {
+          options.value.onOpen?.()
+        } else {
+          options.value.onClose?.()
+          searchButton.value?.focus()
+        }
       })
 
       onMounted(() => environment.addEventListener('keydown', onKeyDown))

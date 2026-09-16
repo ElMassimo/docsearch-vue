@@ -79,6 +79,7 @@ export default function docsearch(
   app.mount(container)
   isReady = true
   mountedDocSearch.set(container, { app, instance, options })
+  normalizedOptions.onReady?.()
 
   return instance
 }

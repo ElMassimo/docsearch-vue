@@ -87,7 +87,7 @@ export function useDocSearchAutocomplete(
     defaultActiveItemId: 0,
     openOnFocus: true,
     navigator: options.navigator,
-    initialState: { query: '', context: {} },
+    initialState: { query: options.initialQuery ?? '', context: {} },
     onStateChange({ state: nextState }) {
       state.value = nextState
     },
