@@ -1,6 +1,7 @@
 import type {
   AutocompleteApi,
   AutocompleteOptions,
+  AutocompleteState,
   BaseItem
 } from '@algolia/autocomplete-core'
 import type { LiteClient, SearchParamsObject } from 'algoliasearch/lite'
@@ -135,6 +136,10 @@ export type HitComponent = (
   props: HitComponentProps
 ) => VNode | VitePressHitVNode
 
+export type ResultsFooterComponent = (props: {
+  state: AutocompleteState<DocSearchHit>
+}) => VNodeChild
+
 interface CommonDocSearchOptions {
   appId: string
   apiKey: string
@@ -153,6 +158,8 @@ interface CommonDocSearchOptions {
   maxResultsPerGroup?: number
   resultBadgeKey?: string
   hitComponent?: HitComponent
+  resultsFooterComponent?: ResultsFooterComponent
+  footerAction?: VNodeChild
   recentSearchesLimit?: number
   recentSearchesWithFavoritesLimit?: number
   navigator?: AutocompleteOptions<DocSearchHit>['navigator']

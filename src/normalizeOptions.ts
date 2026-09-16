@@ -45,6 +45,8 @@ export function normalizeOptions(
     maxResultsPerGroup: options.maxResultsPerGroup,
     resultBadgeKey: options.resultBadgeKey,
     hitComponent: options.hitComponent,
+    resultsFooterComponent: options.resultsFooterComponent,
+    footerAction: options.footerAction,
     recentSearchesLimit: options.recentSearchesLimit,
     recentSearchesWithFavoritesLimit:
       options.recentSearchesWithFavoritesLimit,

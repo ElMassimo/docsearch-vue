@@ -1,3 +1,5 @@
+import type { VNodeChild } from 'vue'
+
 import type { FooterTranslations } from '../types'
 
 function CommandIcon(props: { direction: 'up' | 'down' | 'enter' }) {
@@ -14,7 +16,13 @@ function CommandIcon(props: { direction: 'up' | 'down' | 'enter' }) {
   )
 }
 
-export function Footer({ translations = {} }: { translations?: FooterTranslations }) {
+export function Footer({
+  action,
+  translations = {}
+}: {
+  action?: VNodeChild
+  translations?: FooterTranslations
+}) {
   const {
     navigateText = 'Navigate',
     selectText = 'Select',
@@ -40,6 +48,7 @@ export function Footer({ translations = {} }: { translations?: FooterTranslation
         </li>
       </ul>
       <div class="DocSearch-Footer-Actions">
+        {action ? <div class="DocSearch-Footer-Action">{action}</div> : null}
         <div class="DocSearch-Logo">
           <a
             href="https://www.algolia.com/ref/docsearch/"

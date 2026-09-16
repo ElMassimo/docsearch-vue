@@ -98,6 +98,7 @@ export const SearchModal = defineComponent({
               getMissingResultsUrl={props.options.getMissingResultsUrl}
               hitComponent={props.options.hitComponent}
               resultBadgeKey={props.options.resultBadgeKey}
+              resultsFooterComponent={props.options.resultsFooterComponent}
               onFavorite={favorite}
               onRemoveFavorite={removeFavorite}
               onRemoveRecent={removeRecent}
@@ -105,7 +106,10 @@ export const SearchModal = defineComponent({
           </div>
 
           <footer class="DocSearch-Footer">
-            <Footer translations={props.options.translations?.modal?.footer} />
+            <Footer
+              action={props.options.footerAction}
+              translations={props.options.translations?.modal?.footer}
+            />
           </footer>
         </div>
       </div>

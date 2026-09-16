@@ -1,4 +1,4 @@
-import { nextTick } from 'vue'
+import { h, nextTick } from 'vue'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import docsearch from '../src'
@@ -247,6 +247,12 @@ describe('docsearch', () => {
       indices: ['docs'],
       maxResultsPerGroup: 2,
       resultBadgeKey: 'metadata.category',
+      resultsFooterComponent: ({ state }) => h(
+        'a',
+        { href: `/all?q=${state.query}` },
+        'See all results'
+      ),
+      footerAction: h('button', { type: 'button' }, 'Support'),
       translations: {
         modal: {
           resultsScreen: { resultBadgeLabelText: 'Section' }
@@ -364,6 +370,11 @@ describe('docsearch', () => {
     )
     expect(document.querySelector('.DocSearch-Hit-badge')?.textContent).toContain(
       'Section: Tutorial'
+    )
+    expect(document.querySelector<HTMLAnchorElement>('.DocSearch-HitsFooter a')?.href)
+      .toContain('/all?q=getting')
+    expect(document.querySelector('.DocSearch-Footer-Action')?.textContent).toBe(
+      'Support'
     )
     expect(document.querySelector('.DocSearch-Hit--Child')).not.toBeNull()
     expect(document.querySelector('.DocSearch-Hit-Tree')).not.toBeNull()

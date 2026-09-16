@@ -6,7 +6,8 @@ import type {
   ErrorTranslations,
   HitComponent,
   ModalTranslations,
-  NoResultsTranslations
+  NoResultsTranslations,
+  ResultsFooterComponent
 } from '../types'
 import { ErrorIcon, NoResultsIcon } from './Icons'
 import { SearchResults, type StoredSearchActions } from './SearchResults'
@@ -18,6 +19,7 @@ interface ScreenStateProps extends StoredSearchActions {
   getMissingResultsUrl?: (params: { query: string }) => string
   hitComponent?: HitComponent
   resultBadgeKey?: string
+  resultsFooterComponent?: ResultsFooterComponent
 }
 
 function NoResults({

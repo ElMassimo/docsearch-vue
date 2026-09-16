@@ -6,6 +6,7 @@ import type {
   DocSearchHit,
   HierarchyLevel,
   HitComponent,
+  ResultsFooterComponent,
   ResultsTranslations,
   StartScreenTranslations
 } from '../types'
@@ -23,6 +24,7 @@ interface SearchResultsProps extends StoredSearchActions {
   hitComponent?: HitComponent
   resultBadgeKey?: string
   resultsTranslations?: ResultsTranslations
+  resultsFooterComponent?: ResultsFooterComponent
   translations?: StartScreenTranslations
 }
 
@@ -154,6 +156,11 @@ export function SearchResults(props: SearchResultsProps) {
           </section>
         )
       })}
+      {props.resultsFooterComponent ? (
+        <section class="DocSearch-HitsFooter">
+          {props.resultsFooterComponent({ state: props.state })}
+        </section>
+      ) : null}
     </div>
   )
 }
