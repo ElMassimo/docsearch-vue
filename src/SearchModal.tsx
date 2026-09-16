@@ -103,19 +103,33 @@ export const SearchModal = defineComponent({
               groupedHits.set(title, [...(groupedHits.get(title) ?? []), hit])
             }
 
-            return Array.from(groupedHits, ([title, items], groupIndex) => ({
-              sourceId: `hits_${response.index ?? resultIndex}_${groupIndex}`,
-              getItemUrl({ item }) {
-                return item.url
-              },
-              onSelect() {
-                props.onClose()
-              },
-              getItems() {
-                return items
-              },
-              title
-            }))
+            return Array.from(groupedHits, ([title, items], groupIndex) => {
+              const itemsWithParents = items.map((item) => {
+                const parent = item.type === 'lvl1'
+                  ? null
+                  : items.find(
+                      (candidate) =>
+                        candidate.type === 'lvl1' &&
+                        candidate.hierarchy.lvl1 === item.hierarchy.lvl1
+                    ) ?? null
+
+                return { ...item, __docsearch_parent: parent }
+              })
+
+              return {
+                sourceId: `hits_${response.index ?? resultIndex}_${groupIndex}`,
+                getItemUrl({ item }) {
+                  return item.url
+                },
+                onSelect() {
+                  props.onClose()
+                },
+                getItems() {
+                  return itemsWithParents
+                },
+                title
+              }
+            })
           })
         } catch (error) {
           if ((error as Error).name === 'RetryError') setStatus('error')

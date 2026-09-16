@@ -23,6 +23,7 @@ export interface DocSearchHit extends BaseItem {
     hierarchy?: Partial<Record<HierarchyLevel, HighlightValue>>
     content?: HighlightValue
   }
+  __docsearch_parent?: DocSearchHit | null
 }
 
 export type DocSearchAutocomplete = AutocompleteApi<

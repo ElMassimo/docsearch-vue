@@ -29,7 +29,8 @@ function safeHighlight(value: unknown, fallback: string): VNodeChild {
     } else if (segment === '</mark>') {
       highlighted = false
     } else if (segment) {
-      output.push(highlighted ? h('mark', segment) : segment)
+      const text = segment.replace(/<[^>]*>/g, '')
+      if (text) output.push(highlighted ? h('mark', text) : text)
     }
   }
 
@@ -110,7 +111,10 @@ export function ScreenState(props: ScreenStateProps) {
             >
               {collection.items.map((item) => (
                 <li
-                  class="DocSearch-Hit"
+                  class={[
+                    'DocSearch-Hit',
+                    item.__docsearch_parent && 'DocSearch-Hit--Child'
+                  ].filter(Boolean).join(' ')}
                   key={item.objectID}
                   {...props.autocomplete.getItemProps({
                     item,
@@ -119,6 +123,17 @@ export function ScreenState(props: ScreenStateProps) {
                 >
                   <a href={item.url}>
                     <div class="DocSearch-Hit-Container">
+                      {item.__docsearch_parent ? (
+                        <svg class="DocSearch-Hit-Tree" viewBox="0 0 24 54" aria-hidden="true">
+                          <path
+                            d="M8 6v21M20 27H8.3"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      ) : null}
                       <div class="DocSearch-Hit-icon"><SourceIcon /></div>
                       <div class="DocSearch-Hit-content-wrapper">
                         <span class="DocSearch-Hit-title">{hitTitle(item)}</span>

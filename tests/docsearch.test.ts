@@ -110,6 +110,23 @@ describe('docsearch', () => {
                       hierarchy: {
                         lvl0: 'Guide',
                         lvl1: 'Getting Started'
+                      },
+                      _highlightResult: {
+                        hierarchy: {
+                          lvl1: {
+                            value: 'Getting <mark>Started</mark><img src=x>'
+                          }
+                        }
+                      }
+                    },
+                    {
+                      objectID: 'install',
+                      type: 'content',
+                      content: 'Install the package',
+                      url: '/guide/getting-started#install',
+                      hierarchy: {
+                        lvl0: 'Guide',
+                        lvl1: 'Getting Started'
                       }
                     }
                   ],
@@ -150,6 +167,12 @@ describe('docsearch', () => {
     expect(document.querySelector('.DocSearch-Hit-path')?.textContent).toBe(
       'Guide'
     )
+    expect(document.querySelector('.DocSearch-Hit-title mark')?.textContent).toBe(
+      'Started'
+    )
+    expect(document.querySelector('.DocSearch-Hit-title img')).toBeNull()
+    expect(document.querySelector('.DocSearch-Hit--Child')).not.toBeNull()
+    expect(document.querySelector('.DocSearch-Hit-Tree')).not.toBeNull()
     expect(document.querySelector('.DocSearch-Dropdown-Container')).not.toBeNull()
     expect(document.querySelector('.DocSearch-Hits-padded')).not.toBeNull()
     expect(document.querySelector('.DocSearch-Clear')?.hasAttribute('hidden')).toBe(false)
