@@ -68,6 +68,7 @@ export default function docsearch(
     destroy() {
       if (!isReady) return
 
+      isOpen.value = false
       app.unmount()
       mountedDocSearch.delete(container)
       isReady = false

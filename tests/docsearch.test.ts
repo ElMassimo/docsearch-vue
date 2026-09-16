@@ -211,9 +211,12 @@ describe('docsearch', () => {
     expect(instance.isOpen).toBe(false)
     expect(document.querySelector('.DocSearch-Modal')).toBeNull()
 
+    instance.open()
+    await nextTick()
     instance.destroy()
 
     expect(instance.isReady).toBe(false)
+    expect(instance.isOpen).toBe(false)
     expect(document.querySelector('.DocSearch-Button')).toBeNull()
   })
 
