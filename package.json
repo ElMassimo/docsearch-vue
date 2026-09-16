@@ -22,7 +22,7 @@
     "build": "vite build && tsc -p tsconfig.build.json",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "test:vitepress": "vitepress build fixtures/vitepress",
+    "test:vitepress": "pnpm build && vitepress build fixtures/vitepress",
     "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit"
   },

@@ -11,7 +11,7 @@ export default defineConfig({
     }
   },
   webServer: {
-    command: 'pnpm vitepress dev fixtures/vitepress --port 4173 --host 127.0.0.1',
+    command: 'pnpm build && pnpm vitepress dev fixtures/vitepress --port 4173 --host 127.0.0.1',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: true
   }

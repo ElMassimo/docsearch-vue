@@ -64,13 +64,13 @@ export default defineConfig({
         {
           find: /^@docsearch\/js$/,
           replacement: fileURLToPath(
-            new URL('../../../src/index.ts', import.meta.url)
+            new URL('../../../dist/index.js', import.meta.url)
           )
         },
         {
           find: /^@docsearch\/css$/,
           replacement: fileURLToPath(
-            new URL('../../../src/style.css', import.meta.url)
+            new URL('../../../dist/style.css', import.meta.url)
           )
         }
       ]
