@@ -19,6 +19,23 @@ import type {
   NormalizedDocSearchOptions
 } from './types'
 
+const unavailableStorage = {
+  getItem: () => null,
+  setItem: () => {}
+}
+
+function getStorage(
+  environment: Window,
+  disabled: boolean
+): Pick<Storage, 'getItem' | 'setItem'> {
+  if (disabled) return unavailableStorage
+  try {
+    return environment.localStorage
+  } catch {
+    return unavailableStorage
+  }
+}
+
 function createSearchClient(
   options: NormalizedDocSearchOptions
 ): DocSearchTransformClient {
@@ -66,17 +83,18 @@ export function useDocSearchAutocomplete(
   })
   const environment = options.environment ?? window
   const defaultIndexName = options.indices[0].name
+  const storage = getStorage(environment, Boolean(options.disableUserPersonalization))
   const favoriteSearches = createStoredSearches(
     `__DOCSEARCH_FAVORITE_SEARCHES__${defaultIndexName}`,
     10,
-    environment.localStorage
+    storage
   )
   const recentSearches = createStoredSearches(
     `__DOCSEARCH_RECENT_SEARCHES__${defaultIndexName}`,
     favoriteSearches.getAll().length === 0
       ? options.recentSearchesLimit ?? 7
       : options.recentSearchesWithFavoritesLimit ?? 4,
-    environment.localStorage
+    storage
   )
   const searchClient = createSearchClient(options)
   const facets = normalizeFacets(options.facets)
@@ -106,7 +124,11 @@ export function useDocSearchAutocomplete(
         for (const [facet, counts] of Object.entries(response.facets ?? {})) {
           if (!values[facet]) continue
           values[facet] = [...new Set([...values[facet], ...Object.keys(counts)])]
-            .sort((left, right) => left.localeCompare(right))
+            .sort((left, right) => left.localeCompare(
+              right,
+              undefined,
+              { sensitivity: 'base' }
+            ))
         }
       }
       facetValues.value = values
