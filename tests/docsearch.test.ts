@@ -450,6 +450,11 @@ describe('docsearch', () => {
     expect(document.querySelector('.DocSearch-Close')?.getAttribute('aria-label')).toBe('Close')
     expect(document.querySelector('.DocSearch-Footer')?.textContent).toContain('Navigate')
     expect(document.querySelector('.DocSearch-Footer')?.textContent).toContain('Select')
+    expect(document.querySelector('.DocSearch-Logo svg')?.getAttribute('aria-label')).toBe(
+      'Algolia'
+    )
+    expect(document.querySelector<HTMLAnchorElement>('.DocSearch-Logo a')?.href)
+      .toContain('utm_campaign=docsearch')
 
     const resultLink = document.querySelector<HTMLAnchorElement>('.DocSearch-Hit a')!
     resultLink.addEventListener('click', (event) => event.preventDefault())

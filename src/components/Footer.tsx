@@ -1,6 +1,7 @@
 import type { VNodeChild } from 'vue'
 
 import type { FooterTranslations } from '../types'
+import { AlgoliaLogo } from './AlgoliaLogo'
 
 function CommandIcon(props: { direction: 'up' | 'down' | 'enter' }) {
   const path = {
@@ -18,17 +19,18 @@ function CommandIcon(props: { direction: 'up' | 'down' | 'enter' }) {
 
 export function Footer({
   action,
+  hostname,
   translations = {}
 }: {
   action?: VNodeChild | (() => VNodeChild)
+  hostname: string
   translations?: FooterTranslations
 }) {
   const renderedAction = typeof action === 'function' ? action() : action
   const {
     navigateText = 'Navigate',
     selectText = 'Select',
-    closeText = 'Close',
-    poweredByText = 'Powered by'
+    closeText = 'Close'
   } = translations
 
   return (
@@ -53,14 +55,7 @@ export function Footer({
           <div class="DocSearch-Footer-Action">{renderedAction}</div>
         ) : null}
         <div class="DocSearch-Logo">
-          <a
-            href="https://www.algolia.com/ref/docsearch/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span class="DocSearch-Label">{poweredByText}</span>
-            <strong aria-label="Algolia">algolia</strong>
-          </a>
+          <AlgoliaLogo hostname={hostname} translations={translations} />
         </div>
       </div>
     </>

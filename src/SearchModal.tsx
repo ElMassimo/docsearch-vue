@@ -112,6 +112,7 @@ export const SearchModal = defineComponent({
           <footer class="DocSearch-Footer">
             <Footer
               action={props.options.footerAction}
+              hostname={environment.location.hostname}
               translations={props.options.translations?.modal?.footer}
             />
           </footer>
