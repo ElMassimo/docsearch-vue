@@ -40,6 +40,7 @@ export function normalizeOptions(
     getMissingResultsUrl: options.getMissingResultsUrl,
     translations: options.translations,
     disableUserPersonalization: options.disableUserPersonalization,
+    maxResultsPerGroup: options.maxResultsPerGroup,
     recentSearchesLimit: options.recentSearchesLimit,
     recentSearchesWithFavoritesLimit:
       options.recentSearchesWithFavoritesLimit,

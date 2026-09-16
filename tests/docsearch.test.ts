@@ -223,6 +223,7 @@ describe('docsearch', () => {
       apiKey: 'key',
       container: '#docsearch',
       indices: ['docs'],
+      maxResultsPerGroup: 2,
       transformSearchClient(searchClient) {
         return {
           ...searchClient,
@@ -253,6 +254,16 @@ describe('docsearch', () => {
                       type: 'content',
                       content: 'Install the package',
                       url: '/guide/getting-started#install',
+                      hierarchy: {
+                        lvl0: 'Guide',
+                        lvl1: 'Getting Started'
+                      }
+                    },
+                    {
+                      objectID: 'configure',
+                      type: 'content',
+                      content: 'Configure the package',
+                      url: '/guide/getting-started#configure',
                       hierarchy: {
                         lvl0: 'Guide',
                         lvl1: 'Getting Started'
@@ -302,6 +313,7 @@ describe('docsearch', () => {
     expect(document.querySelector('.DocSearch-Hit-title img')).toBeNull()
     expect(document.querySelector('.DocSearch-Hit--Child')).not.toBeNull()
     expect(document.querySelector('.DocSearch-Hit-Tree')).not.toBeNull()
+    expect(document.querySelectorAll('.DocSearch-Hit')).toHaveLength(2)
     expect(document.querySelector('.DocSearch-Dropdown-Container')).not.toBeNull()
     expect(document.querySelector('.DocSearch-Hits-padded')).not.toBeNull()
     expect(document.querySelector('.DocSearch-Clear')?.hasAttribute('hidden')).toBe(false)

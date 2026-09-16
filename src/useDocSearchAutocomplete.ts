@@ -146,7 +146,9 @@ export function useDocSearchAutocomplete(
               saveRecentSearch(item)
               onClose()
             },
-            getItems: () => addParents(items)
+            getItems: () => addParents(
+              items.slice(0, options.maxResultsPerGroup || 5)
+            )
           }))
         })
       } catch (error) {

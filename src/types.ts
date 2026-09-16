@@ -113,6 +113,7 @@ interface CommonDocSearchOptions {
   getMissingResultsUrl?: (params: { query: string }) => string
   translations?: DocSearchTranslations
   disableUserPersonalization?: boolean
+  maxResultsPerGroup?: number
   recentSearchesLimit?: number
   recentSearchesWithFavoritesLimit?: number
   navigator?: AutocompleteOptions<DocSearchHit>['navigator']
