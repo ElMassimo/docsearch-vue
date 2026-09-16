@@ -26,12 +26,13 @@
   "scripts": {
     "build": "vite build && tsc -p tsconfig.build.json",
     "check:bundle": "node scripts/check-bundle.mjs",
+    "check:package": "node scripts/check-package.mjs",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "test:vitepress": "pnpm build && vitepress build fixtures/vitepress",
     "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit",
-    "verify": "pnpm typecheck && pnpm test && pnpm test:vitepress && pnpm check:bundle"
+    "verify": "pnpm typecheck && pnpm test && pnpm test:vitepress && pnpm check:bundle && pnpm check:package"
   },
   "dependencies": {
     "@algolia/autocomplete-core": "1.19.2",

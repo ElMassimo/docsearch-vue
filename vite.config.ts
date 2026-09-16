@@ -1,6 +1,11 @@
 import { defineConfig } from 'vitest/config'
 
+import packageMetadata from './package.json'
+
 export default defineConfig({
+  define: {
+    __DOCSEARCH_VUE_VERSION__: JSON.stringify(packageMetadata.version)
+  },
   build: {
     lib: {
       entry: 'src/index.ts',
