@@ -1,4 +1,18 @@
-import type { SearchParamsObject } from 'algoliasearch/lite'
+import type { AutocompleteOptions, BaseItem } from '@algolia/autocomplete-core'
+import type { LiteClient, SearchParamsObject } from 'algoliasearch/lite'
+
+export interface DocSearchHit extends BaseItem {
+  objectID: string
+  type: `lvl${0 | 1 | 2 | 3 | 4 | 5 | 6}` | 'content'
+  url: string
+  content?: string | null
+  hierarchy: Partial<Record<`lvl${0 | 1 | 2 | 3 | 4 | 5 | 6}`, string | null>>
+}
+
+export type DocSearchTransformClient = Pick<
+  LiteClient,
+  'search' | 'addAlgoliaAgent' | 'transporter'
+>
 
 export interface DocSearchIndex {
   name: string
@@ -11,6 +25,11 @@ interface CommonDocSearchOptions {
   container: HTMLElement | string
   environment?: Window
   placeholder?: string
+  navigator?: AutocompleteOptions<DocSearchHit>['navigator']
+  transformItems?: (items: DocSearchHit[]) => DocSearchHit[]
+  transformSearchClient?: (
+    searchClient: DocSearchTransformClient
+  ) => DocSearchTransformClient
 }
 
 export type NativeDocSearchOptions = CommonDocSearchOptions & {

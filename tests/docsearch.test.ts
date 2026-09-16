@@ -62,6 +62,62 @@ describe('docsearch', () => {
     expect(document.querySelector('.DocSearch-Button')).toBeNull()
   })
 
+  it('renders grouped DocSearch 5 results through autocomplete-core', async () => {
+    document.body.innerHTML = '<div id="docsearch"></div>'
+    const instance = docsearch({
+      appId: 'app',
+      apiKey: 'key',
+      container: '#docsearch',
+      indices: ['docs'],
+      transformSearchClient(searchClient) {
+        return {
+          ...searchClient,
+          async search() {
+            return {
+              results: [
+                {
+                  index: 'docs',
+                  hits: [
+                    {
+                      objectID: 'getting-started',
+                      type: 'lvl1',
+                      url: '/guide/getting-started',
+                      hierarchy: {
+                        lvl0: 'Guide',
+                        lvl1: 'Getting Started'
+                      }
+                    }
+                  ],
+                  hitsPerPage: 20,
+                  nbHits: 1,
+                  nbPages: 1,
+                  page: 0,
+                  processingTimeMS: 1,
+                  exhaustiveNbHits: true,
+                  query: 'getting',
+                  params: ''
+                }
+              ]
+            } as never
+          }
+        }
+      }
+    })
+    instances.push(instance)
+
+    instance.open()
+    await nextTick()
+
+    const input = document.querySelector<HTMLInputElement>('.DocSearch-Input')
+    expect(input).not.toBeNull()
+
+    input!.value = 'getting'
+    input!.dispatchEvent(new Event('input', { bubbles: true }))
+
+    await expect.poll(() => document.querySelector('.DocSearch-Hit-title')?.textContent).toBe('Getting Started')
+    expect(document.querySelector('.DocSearch-Hit-source')?.textContent).toBe('Guide')
+  })
+
   it('updates an existing mount when VitePress initializes the container again', () => {
     document.body.innerHTML = '<div id="docsearch"></div>'
 

@@ -33,6 +33,9 @@ export function normalizeOptions(
     container: options.container,
     environment: options.environment,
     placeholder: options.placeholder,
+    navigator: options.navigator,
+    transformItems: options.transformItems,
+    transformSearchClient: options.transformSearchClient,
     indices
   }
 }

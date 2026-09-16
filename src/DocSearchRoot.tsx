@@ -5,6 +5,7 @@ import {
   type ShallowRef
 } from 'vue'
 
+import { SearchModal } from './SearchModal'
 import type { NormalizedDocSearchOptions } from './types'
 
 export function createDocSearchRoot(
@@ -31,9 +32,12 @@ export function createDocSearchRoot(
 
           {isOpen.value ? (
             <Teleport to="body">
-              <div class="DocSearch DocSearch-Container" role="presentation">
-                <div class="DocSearch-Modal" role="dialog" aria-modal="true" />
-              </div>
+              <SearchModal
+                options={options.value}
+                onClose={() => {
+                  isOpen.value = false
+                }}
+              />
             </Teleport>
           ) : null}
         </>
