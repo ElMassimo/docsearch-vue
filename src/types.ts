@@ -1,13 +1,36 @@
-import type { AutocompleteOptions, BaseItem } from '@algolia/autocomplete-core'
+import type {
+  AutocompleteApi,
+  AutocompleteOptions,
+  BaseItem
+} from '@algolia/autocomplete-core'
 import type { LiteClient, SearchParamsObject } from 'algoliasearch/lite'
+
+export type HierarchyLevel = `lvl${0 | 1 | 2 | 3 | 4 | 5 | 6}`
+
+type HighlightValue = { value: string }
 
 export interface DocSearchHit extends BaseItem {
   objectID: string
-  type: `lvl${0 | 1 | 2 | 3 | 4 | 5 | 6}` | 'content'
+  type: HierarchyLevel | 'content'
   url: string
   content?: string | null
-  hierarchy: Partial<Record<`lvl${0 | 1 | 2 | 3 | 4 | 5 | 6}`, string | null>>
+  hierarchy: Partial<Record<HierarchyLevel, string | null>>
+  _highlightResult?: {
+    hierarchy?: Partial<Record<HierarchyLevel, HighlightValue>>
+    content?: HighlightValue
+  }
+  _snippetResult?: {
+    hierarchy?: Partial<Record<HierarchyLevel, HighlightValue>>
+    content?: HighlightValue
+  }
 }
+
+export type DocSearchAutocomplete = AutocompleteApi<
+  DocSearchHit,
+  Event,
+  MouseEvent,
+  KeyboardEvent
+>
 
 export type DocSearchTransformClient = Pick<
   LiteClient,

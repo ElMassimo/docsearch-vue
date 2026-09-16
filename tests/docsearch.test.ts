@@ -139,8 +139,70 @@ describe('docsearch', () => {
     input!.value = 'getting'
     input!.dispatchEvent(new Event('input', { bubbles: true }))
 
-    await expect.poll(() => document.querySelector('.DocSearch-Hit-title')?.textContent).toBe('Getting Started')
-    expect(document.querySelector('.DocSearch-Hit-source')?.textContent).toBe('Guide')
+    await expect
+      .poll(
+        () => document.querySelector('.DocSearch-Hit-title')?.textContent
+      )
+      .toBe('Getting Started')
+    expect(document.querySelector('.DocSearch-Hit-source')?.textContent).toBe(
+      'Guide'
+    )
+    expect(document.querySelector('.DocSearch-Hit-path')?.textContent).toBe(
+      'Guide'
+    )
+    expect(document.querySelector('.DocSearch-Dropdown-Container')).not.toBeNull()
+    expect(document.querySelector('.DocSearch-Hits-padded')).not.toBeNull()
+    expect(document.querySelector('.DocSearch-Clear')?.hasAttribute('hidden')).toBe(false)
+    expect(document.querySelector('.DocSearch-Close')?.getAttribute('aria-label')).toBe('Close')
+    expect(document.querySelector('.DocSearch-Footer')?.textContent).toContain('Navigate')
+    expect(document.querySelector('.DocSearch-Footer')?.textContent).toContain('Select')
+  })
+
+  it('shows the DocSearch 5 no-results state for an empty response', async () => {
+    document.body.innerHTML = '<div id="docsearch"></div>'
+    const instance = docsearch({
+      appId: 'app',
+      apiKey: 'key',
+      container: '#docsearch',
+      indices: ['docs'],
+      transformSearchClient(searchClient) {
+        return {
+          ...searchClient,
+          async search() {
+            return {
+              results: [
+                {
+                  index: 'docs',
+                  hits: [],
+                  hitsPerPage: 20,
+                  nbHits: 0,
+                  nbPages: 0,
+                  page: 0,
+                  processingTimeMS: 1,
+                  exhaustiveNbHits: true,
+                  query: 'missing',
+                  params: ''
+                }
+              ]
+            } as never
+          }
+        }
+      }
+    })
+    instances.push(instance)
+
+    instance.open()
+    await nextTick()
+    const input = document.querySelector<HTMLInputElement>('.DocSearch-Input')!
+    input.value = 'missing'
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+
+    await expect
+      .poll(() => document.querySelector('.DocSearch-NoResults')?.textContent)
+      .toContain('No results found for')
+    expect(document.querySelector('.DocSearch-NoResults')?.textContent).toContain(
+      'missing'
+    )
   })
 
   it('updates an existing mount when VitePress initializes the container again', () => {

@@ -6,6 +6,9 @@ import type { SearchResponse } from 'algoliasearch/lite'
 import { liteClient } from 'algoliasearch/lite'
 import { defineComponent, onMounted, ref, shallowRef, type PropType } from 'vue'
 
+import { Footer } from './components/Footer'
+import { ScreenState } from './components/ScreenState'
+import { SearchBox } from './components/SearchBox'
 import type {
   DocSearchHit,
   DocSearchTransformClient,
@@ -29,12 +32,6 @@ function createSearchClient(
   client.addAlgoliaAgent('docsearch-vue', '0.0.0')
 
   return options.transformSearchClient?.(client) ?? client
-}
-
-function resultTitle(hit: DocSearchHit): string {
-  return hit.hierarchy[hit.type as `lvl${0 | 1 | 2 | 3 | 4 | 5 | 6}`] ??
-    hit.content ??
-    ''
 }
 
 export const SearchModal = defineComponent({
@@ -129,78 +126,39 @@ export const SearchModal = defineComponent({
 
     onMounted(() => input.value?.focus())
 
-    return () => {
-      const { onChange, ...inputProps } = autocomplete.getInputProps({
-        inputElement: input.value,
-        placeholder: props.options.placeholder ?? 'Search docs'
-      })
-
-      return (
+    return () => (
       <div
-        class="DocSearch DocSearch-Container"
         {...autocomplete.getRootProps({ 'aria-expanded': true })}
+        class={[
+          'DocSearch',
+          'DocSearch-Container',
+          state.value.status === 'stalled' && 'DocSearch-Container--Stalled',
+          state.value.status === 'error' && 'DocSearch-Container--Errored'
+        ].filter(Boolean).join(' ')}
+        role="button"
+        tabindex={0}
+        onMousedown={(event) => {
+          if (event.target === event.currentTarget) props.onClose()
+        }}
       >
         <div class="DocSearch-Modal" role="dialog" aria-modal="true">
           <header class="DocSearch-SearchBar">
-            <form
-              class="DocSearch-Form"
-              {...autocomplete.getFormProps({ inputElement: input.value })}
-            >
-              <label
-                class="DocSearch-MagnifierLabel"
-                {...autocomplete.getLabelProps()}
-              >
-                <span aria-hidden="true">⌕</span>
-              </label>
-              <input
-                class="DocSearch-Input"
-                ref={input}
-                {...inputProps}
-                onInput={onChange}
-              />
-            </form>
-            <button class="DocSearch-Cancel" type="button" onClick={props.onClose}>
-              Cancel
-            </button>
+            <SearchBox
+              autocomplete={autocomplete}
+              input={input}
+              onClose={props.onClose}
+              placeholder={props.options.placeholder ?? 'Search docs'}
+              state={state.value}
+            />
           </header>
 
           <div class="DocSearch-Dropdown">
-            {state.value.collections.map((collection) => {
-              if (collection.items.length === 0) return null
-              const title = collection.items[0]?.hierarchy.lvl0 ?? ''
-
-              return (
-                <section class="DocSearch-Hits" key={collection.source.sourceId}>
-                  <div class="DocSearch-Hit-source">{title}</div>
-                  <ul {...autocomplete.getListProps()}>
-                    {collection.items.map((item) => (
-                      <li
-                        class="DocSearch-Hit"
-                        key={item.objectID}
-                        {...autocomplete.getItemProps({
-                          item,
-                          source: collection.source
-                        })}
-                      >
-                        <a href={item.url}>
-                          <div class="DocSearch-Hit-Container">
-                            <div class="DocSearch-Hit-content-wrapper">
-                              <span class="DocSearch-Hit-title">
-                                {resultTitle(item)}
-                              </span>
-                            </div>
-                          </div>
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )
-            })}
+            <ScreenState autocomplete={autocomplete} state={state.value} />
           </div>
+
+          <footer class="DocSearch-Footer"><Footer /></footer>
         </div>
       </div>
-      )
-    }
+    )
   }
 })
