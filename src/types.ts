@@ -4,6 +4,7 @@ import type {
   BaseItem
 } from '@algolia/autocomplete-core'
 import type { LiteClient, SearchParamsObject } from 'algoliasearch/lite'
+import type { VNode, VNodeChild } from 'vue'
 
 export type HierarchyLevel = `lvl${0 | 1 | 2 | 3 | 4 | 5 | 6}`
 
@@ -100,6 +101,20 @@ export interface DocSearchIndex {
   searchParameters?: SearchParamsObject
 }
 
+export interface HitComponentProps {
+  hit: DocSearchHit
+  children: VNodeChild
+}
+
+export interface VitePressHitVNode {
+  type: 'a'
+  props?: Record<string, unknown> & { children?: unknown }
+}
+
+export type HitComponent = (
+  props: HitComponentProps
+) => VNode | VitePressHitVNode
+
 interface CommonDocSearchOptions {
   appId: string
   apiKey: string
@@ -114,6 +129,7 @@ interface CommonDocSearchOptions {
   translations?: DocSearchTranslations
   disableUserPersonalization?: boolean
   maxResultsPerGroup?: number
+  hitComponent?: HitComponent
   recentSearchesLimit?: number
   recentSearchesWithFavoritesLimit?: number
   navigator?: AutocompleteOptions<DocSearchHit>['navigator']

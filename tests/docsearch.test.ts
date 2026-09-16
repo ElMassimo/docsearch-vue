@@ -224,6 +224,20 @@ describe('docsearch', () => {
       container: '#docsearch',
       indices: ['docs'],
       maxResultsPerGroup: 2,
+      hitComponent({ hit, children }) {
+        return {
+          __v: null,
+          type: 'a',
+          ref: undefined,
+          constructor: undefined,
+          key: undefined,
+          props: {
+            href: hit.url,
+            children,
+            'data-vitepress-hit': 'true'
+          }
+        }
+      },
       navigator: {
         navigate: vi.fn(),
         navigateNewTab: vi.fn(),
@@ -316,6 +330,9 @@ describe('docsearch', () => {
       'Started'
     )
     expect(document.querySelector('.DocSearch-Hit-title img')).toBeNull()
+    expect(document.querySelector('.DocSearch-Hit a')?.getAttribute('data-vitepress-hit')).toBe(
+      'true'
+    )
     expect(document.querySelector('.DocSearch-Hit--Child')).not.toBeNull()
     expect(document.querySelector('.DocSearch-Hit-Tree')).not.toBeNull()
     expect(document.querySelectorAll('.DocSearch-Hit')).toHaveLength(2)

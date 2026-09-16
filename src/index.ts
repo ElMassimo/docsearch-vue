@@ -12,11 +12,14 @@ export type {
   DocSearchTranslations,
   ErrorTranslations,
   FooterTranslations,
+  HitComponent,
+  HitComponentProps,
   ModalTranslations,
   NativeDocSearchOptions,
   NoResultsTranslations,
   NormalizedDocSearchOptions,
   SearchBoxTranslations,
   StartScreenTranslations,
-  VitePressDocSearchOptions
+  VitePressDocSearchOptions,
+  VitePressHitVNode
 } from './types'

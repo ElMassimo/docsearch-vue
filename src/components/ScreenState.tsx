@@ -4,6 +4,7 @@ import type {
   DocSearchAutocomplete,
   DocSearchHit,
   ErrorTranslations,
+  HitComponent,
   ModalTranslations,
   NoResultsTranslations
 } from '../types'
@@ -15,6 +16,7 @@ interface ScreenStateProps extends StoredSearchActions {
   state: AutocompleteState<DocSearchHit>
   translations?: ModalTranslations
   getMissingResultsUrl?: (params: { query: string }) => string
+  hitComponent?: HitComponent
 }
 
 function NoResults({

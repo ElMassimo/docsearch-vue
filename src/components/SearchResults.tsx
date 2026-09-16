@@ -1,10 +1,11 @@
 import type { AutocompleteState } from '@algolia/autocomplete-core'
-import { h, type VNodeChild } from 'vue'
+import { h, isVNode, type VNode, type VNodeChild } from 'vue'
 
 import type {
   DocSearchAutocomplete,
   DocSearchHit,
   HierarchyLevel,
+  HitComponent,
   StartScreenTranslations
 } from '../types'
 import { CloseIcon, PinIcon, SelectIcon, SourceIcon } from './Icons'
@@ -18,6 +19,7 @@ export interface StoredSearchActions {
 interface SearchResultsProps extends StoredSearchActions {
   autocomplete: DocSearchAutocomplete
   state: AutocompleteState<DocSearchHit>
+  hitComponent?: HitComponent
   translations?: StartScreenTranslations
 }
 
@@ -105,40 +107,70 @@ export function SearchResults(props: SearchResultsProps) {
               class="DocSearch-Hits-padded"
               {...props.autocomplete.getListProps({ source: collection.source })}
             >
-              {collection.items.map((item) => (
-                <li
-                  class={[
-                    'DocSearch-Hit',
-                    item.__docsearch_parent && 'DocSearch-Hit--Child'
-                  ].filter(Boolean).join(' ')}
-                  key={item.objectID}
-                  {...props.autocomplete.getItemProps({ item, source: collection.source })}
-                >
-                  <a href={item.url}>
-                    <div class="DocSearch-Hit-Container">
-                      {item.__docsearch_parent ? <HitTree /> : null}
-                      <div class="DocSearch-Hit-icon"><SourceIcon /></div>
-                      <div class="DocSearch-Hit-content-wrapper">
-                        <span class="DocSearch-Hit-title">{hitTitle(item)}</span>
-                        <span class="DocSearch-Hit-path">{breadcrumbs(item)}</span>
-                      </div>
-                      <StoredSearchAction
-                        item={item}
-                        isFavorite={isFavorite}
-                        isRecent={isRecent}
-                        translations={props.translations}
-                        {...props}
-                      />
+              {collection.items.map((item) => {
+                const content = (
+                  <div class="DocSearch-Hit-Container">
+                    {item.__docsearch_parent ? <HitTree /> : null}
+                    <div class="DocSearch-Hit-icon"><SourceIcon /></div>
+                    <div class="DocSearch-Hit-content-wrapper">
+                      <span class="DocSearch-Hit-title">{hitTitle(item)}</span>
+                      <span class="DocSearch-Hit-path">{breadcrumbs(item)}</span>
                     </div>
-                  </a>
-                </li>
-              ))}
+                    <StoredSearchAction
+                      item={item}
+                      isFavorite={isFavorite}
+                      isRecent={isRecent}
+                      translations={props.translations}
+                      {...props}
+                    />
+                  </div>
+                )
+
+                return (
+                  <li
+                    class={[
+                      'DocSearch-Hit',
+                      item.__docsearch_parent && 'DocSearch-Hit--Child'
+                    ].filter(Boolean).join(' ')}
+                    key={item.objectID}
+                    {...props.autocomplete.getItemProps({
+                      item,
+                      source: collection.source
+                    })}
+                  >
+                    {renderHit(item, content, props.hitComponent)}
+                  </li>
+                )
+              })}
             </ul>
           </section>
         )
       })}
     </div>
   )
+}
+
+function renderHit(
+  hit: DocSearchHit,
+  children: VNode,
+  hitComponent?: HitComponent
+): VNodeChild {
+  if (!hitComponent) return h('a', { href: hit.url }, children)
+
+  const rendered = hitComponent({ hit, children })
+  if (isVNode(rendered)) return rendered
+
+  if (
+    typeof rendered === 'object' &&
+    rendered !== null &&
+    'type' in rendered &&
+    rendered.type === 'a'
+  ) {
+    const { children: _legacyChildren, ...props } = rendered.props ?? {}
+    return h('a', props, children)
+  }
+
+  return h('a', { href: hit.url }, children)
 }
 
 function HitTree() {

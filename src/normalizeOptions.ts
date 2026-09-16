@@ -41,6 +41,7 @@ export function normalizeOptions(
     translations: options.translations,
     disableUserPersonalization: options.disableUserPersonalization,
     maxResultsPerGroup: options.maxResultsPerGroup,
+    hitComponent: options.hitComponent,
     recentSearchesLimit: options.recentSearchesLimit,
     recentSearchesWithFavoritesLimit:
       options.recentSearchesWithFavoritesLimit,

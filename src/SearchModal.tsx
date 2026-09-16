@@ -80,6 +80,7 @@ export const SearchModal = defineComponent({
               state={state.value}
               translations={props.options.translations?.modal}
               getMissingResultsUrl={props.options.getMissingResultsUrl}
+              hitComponent={props.options.hitComponent}
               onFavorite={favorite}
               onRemoveFavorite={removeFavorite}
               onRemoveRecent={removeRecent}
