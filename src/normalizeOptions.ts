@@ -33,6 +33,7 @@ export function normalizeOptions(
     container: options.container,
     environment: options.environment,
     placeholder: options.placeholder,
+    translations: options.translations,
     navigator: options.navigator,
     transformItems: options.transformItems,
     transformSearchClient: options.transformSearchClient,

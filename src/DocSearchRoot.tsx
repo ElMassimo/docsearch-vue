@@ -64,13 +64,15 @@ export function createDocSearchRoot(
             type="button"
             class="DocSearch DocSearch-Button"
             ref={searchButton}
-            aria-label="Search"
+            aria-label={
+              options.value.translations?.button?.buttonAriaLabel ?? 'Search'
+            }
             onClick={() => {
               isOpen.value = true
             }}
           >
             <span class="DocSearch-Button-Placeholder">
-              {options.value.placeholder ?? 'Search'}
+              {options.value.translations?.button?.buttonText ?? 'Search'}
             </span>
           </button>
 

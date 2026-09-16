@@ -1,12 +1,20 @@
 import type { AutocompleteState } from '@algolia/autocomplete-core'
 import { h, type VNodeChild } from 'vue'
 
-import type { DocSearchAutocomplete, DocSearchHit, HierarchyLevel } from '../types'
+import type {
+  DocSearchAutocomplete,
+  DocSearchHit,
+  ErrorTranslations,
+  HierarchyLevel,
+  ModalTranslations,
+  NoResultsTranslations
+} from '../types'
 import { ErrorIcon, NoResultsIcon, SelectIcon, SourceIcon } from './Icons'
 
 interface ScreenStateProps {
   autocomplete: DocSearchAutocomplete
   state: AutocompleteState<DocSearchHit>
+  translations?: ModalTranslations
 }
 
 function getNestedValue(hit: DocSearchHit, path: string): unknown {
@@ -63,35 +71,56 @@ function breadcrumbs(hit: DocSearchHit): string {
     .join(' > ')
 }
 
-function NoResults({ query }: { query: string }) {
+function NoResults({
+  query,
+  translations = {}
+}: {
+  query: string
+  translations?: NoResultsTranslations
+}) {
+  const noResultsText = translations.noResultsText ?? 'No results found for'
+
   return (
     <div class="DocSearch-NoResults">
       <div class="DocSearch-Screen-Icon"><NoResultsIcon /></div>
       <p class="DocSearch-Title">
-        No results found for "<strong>{query}</strong>"
+        {noResultsText} "<strong>{query}</strong>"
       </p>
     </div>
   )
 }
 
-function ErrorScreen() {
+function ErrorScreen({ translations = {} }: { translations?: ErrorTranslations }) {
+  const titleText = translations.titleText ?? 'Unable to fetch results'
+  const helpText =
+    translations.helpText ?? 'You might want to check your network connection.'
+
   return (
     <div class="DocSearch-ErrorScreen">
       <div class="DocSearch-Screen-Icon"><ErrorIcon /></div>
-      <p class="DocSearch-Title">Unable to fetch results</p>
-      <p class="DocSearch-Help">You might want to check your network connection.</p>
+      <p class="DocSearch-Title">{titleText}</p>
+      <p class="DocSearch-Help">{helpText}</p>
     </div>
   )
 }
 
 export function ScreenState(props: ScreenStateProps) {
-  if (props.state.status === 'error') return <ErrorScreen />
+  if (props.state.status === 'error') {
+    return <ErrorScreen translations={props.translations?.errorScreen} />
+  }
   if (!props.state.query) return <div class="DocSearch-Dropdown-Container" />
 
   const hasResults = props.state.collections.some(
     (collection) => collection.items.length > 0
   )
-  if (!hasResults) return <NoResults query={props.state.query} />
+  if (!hasResults) {
+    return (
+      <NoResults
+        query={props.state.query}
+        translations={props.translations?.noResultsScreen}
+      />
+    )
+  }
 
   return (
     <div class="DocSearch-Dropdown-Container">

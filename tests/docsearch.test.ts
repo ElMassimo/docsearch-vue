@@ -31,6 +31,56 @@ describe('docsearch', () => {
     )
   })
 
+  it('applies DocSearch 5 translations', async () => {
+    document.body.innerHTML = '<div id="docsearch"></div>'
+    const instance = docsearch({
+      appId: 'app',
+      apiKey: 'key',
+      container: '#docsearch',
+      indices: ['docs'],
+      translations: {
+        button: {
+          buttonText: 'Rechercher',
+          buttonAriaLabel: 'Ouvrir la recherche'
+        },
+        modal: {
+          searchBox: {
+            clearButtonTitle: 'Effacer',
+            closeButtonAriaLabel: 'Fermer',
+            placeholderText: 'Rechercher la documentation'
+          },
+          footer: {
+            navigateText: 'Naviguer',
+            selectText: 'Sélectionner',
+            closeText: 'Fermer'
+          }
+        }
+      }
+    })
+    instances.push(instance)
+
+    expect(document.querySelector('.DocSearch-Button')?.textContent).toContain(
+      'Rechercher'
+    )
+    expect(document.querySelector('.DocSearch-Button')?.getAttribute('aria-label')).toBe(
+      'Ouvrir la recherche'
+    )
+
+    instance.open()
+    await nextTick()
+
+    expect(document.querySelector('.DocSearch-Input')?.getAttribute('placeholder')).toBe(
+      'Rechercher la documentation'
+    )
+    expect(document.querySelector('.DocSearch-Clear')?.textContent).toBe('Effacer')
+    expect(document.querySelector('.DocSearch-Close')?.getAttribute('aria-label')).toBe(
+      'Fermer'
+    )
+    expect(document.querySelector('.DocSearch-Footer')?.textContent).toContain(
+      'Naviguer'
+    )
+  })
+
   it('opens, closes, and destroys the teleported modal', async () => {
     document.body.innerHTML = '<div id="docsearch"></div>'
     const instance = docsearch({

@@ -173,16 +173,27 @@ export const SearchModal = defineComponent({
               form={form}
               input={input}
               onClose={props.onClose}
-              placeholder={props.options.placeholder ?? 'Search docs'}
+              placeholder={
+                props.options.translations?.modal?.searchBox?.placeholderText ??
+                props.options.placeholder ??
+                'Search docs'
+              }
               state={state.value}
+              translations={props.options.translations?.modal?.searchBox}
             />
           </header>
 
           <div ref={dropdown} class="DocSearch-Dropdown">
-            <ScreenState autocomplete={autocomplete} state={state.value} />
+            <ScreenState
+              autocomplete={autocomplete}
+              state={state.value}
+              translations={props.options.translations?.modal}
+            />
           </div>
 
-          <footer class="DocSearch-Footer"><Footer /></footer>
+          <footer class="DocSearch-Footer">
+            <Footer translations={props.options.translations?.modal?.footer} />
+          </footer>
         </div>
       </div>
     )

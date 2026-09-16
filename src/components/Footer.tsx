@@ -1,3 +1,5 @@
+import type { FooterTranslations } from '../types'
+
 function CommandIcon(props: { direction: 'up' | 'down' | 'enter' }) {
   const path = {
     up: 'm5 12 7-7 7 7M12 19V5',
@@ -12,22 +14,29 @@ function CommandIcon(props: { direction: 'up' | 'down' | 'enter' }) {
   )
 }
 
-export function Footer() {
+export function Footer({ translations = {} }: { translations?: FooterTranslations }) {
+  const {
+    navigateText = 'Navigate',
+    selectText = 'Select',
+    closeText = 'Close',
+    poweredByText = 'Powered by'
+  } = translations
+
   return (
     <>
       <ul class="DocSearch-Commands">
         <li>
           <kbd class="DocSearch-Commands-Key"><CommandIcon direction="down" /></kbd>
           <kbd class="DocSearch-Commands-Key"><CommandIcon direction="up" /></kbd>
-          <span class="DocSearch-Label">Navigate</span>
+          <span class="DocSearch-Label">{navigateText}</span>
         </li>
         <li>
           <kbd class="DocSearch-Commands-Key"><CommandIcon direction="enter" /></kbd>
-          <span class="DocSearch-Label">Select</span>
+          <span class="DocSearch-Label">{selectText}</span>
         </li>
         <li>
           <kbd class="DocSearch-Commands-Key"><span class="DocSearch-Escape-Key">ESC</span></kbd>
-          <span class="DocSearch-Label">Close</span>
+          <span class="DocSearch-Label">{closeText}</span>
         </li>
       </ul>
       <div class="DocSearch-Footer-Actions">
@@ -37,7 +46,7 @@ export function Footer() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <span class="DocSearch-Label">Powered by</span>
+            <span class="DocSearch-Label">{poweredByText}</span>
             <strong aria-label="Algolia">algolia</strong>
           </a>
         </div>

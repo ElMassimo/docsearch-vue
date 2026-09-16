@@ -38,6 +38,52 @@ export type DocSearchTransformClient = Pick<
   'search' | 'addAlgoliaAgent' | 'transporter'
 >
 
+export interface ButtonTranslations {
+  buttonText?: string
+  buttonAriaLabel?: string
+}
+
+export interface SearchBoxTranslations {
+  clearButtonTitle?: string
+  clearButtonAriaLabel?: string
+  closeButtonText?: string
+  closeButtonAriaLabel?: string
+  placeholderText?: string
+  searchInputLabel?: string
+  resetButtonTitle?: string
+  resetButtonAriaLabel?: string
+  cancelButtonText?: string
+  cancelButtonAriaLabel?: string
+}
+
+export interface FooterTranslations {
+  navigateText?: string
+  selectText?: string
+  closeText?: string
+  poweredByText?: string
+}
+
+export interface NoResultsTranslations {
+  noResultsText?: string
+}
+
+export interface ErrorTranslations {
+  titleText?: string
+  helpText?: string
+}
+
+export interface ModalTranslations {
+  searchBox?: SearchBoxTranslations
+  footer?: FooterTranslations
+  noResultsScreen?: NoResultsTranslations
+  errorScreen?: ErrorTranslations
+}
+
+export interface DocSearchTranslations {
+  button?: ButtonTranslations
+  modal?: ModalTranslations
+}
+
 export interface DocSearchIndex {
   name: string
   searchParameters?: SearchParamsObject
@@ -49,6 +95,7 @@ interface CommonDocSearchOptions {
   container: HTMLElement | string
   environment?: Window
   placeholder?: string
+  translations?: DocSearchTranslations
   navigator?: AutocompleteOptions<DocSearchHit>['navigator']
   transformItems?: (items: DocSearchHit[]) => DocSearchHit[]
   transformSearchClient?: (

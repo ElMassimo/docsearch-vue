@@ -1,7 +1,11 @@
 import type { AutocompleteState } from '@algolia/autocomplete-core'
 import type { Ref } from 'vue'
 
-import type { DocSearchAutocomplete, DocSearchHit } from '../types'
+import type {
+  DocSearchAutocomplete,
+  DocSearchHit,
+  SearchBoxTranslations
+} from '../types'
 import { CloseIcon, SearchIcon } from './Icons'
 
 interface SearchBoxProps {
@@ -11,6 +15,7 @@ interface SearchBoxProps {
   onClose: () => void
   placeholder: string
   state: AutocompleteState<DocSearchHit>
+  translations?: SearchBoxTranslations
 }
 
 export function SearchBox(props: SearchBoxProps) {
@@ -29,6 +34,23 @@ export function SearchBox(props: SearchBoxProps) {
   })
   const isLoading = props.state.status === 'stalled'
   const hasQuery = Boolean(props.state.query)
+  const clearButtonTitle =
+    props.translations?.clearButtonTitle ??
+    props.translations?.resetButtonTitle ??
+    'Clear'
+  const clearButtonAriaLabel =
+    props.translations?.clearButtonAriaLabel ??
+    props.translations?.resetButtonAriaLabel ??
+    'Clear the query'
+  const closeButtonText =
+    props.translations?.closeButtonText ??
+    props.translations?.cancelButtonText ??
+    'Close'
+  const closeButtonAriaLabel =
+    props.translations?.closeButtonAriaLabel ??
+    props.translations?.cancelButtonAriaLabel ??
+    'Close'
+  const searchInputLabel = props.translations?.searchInputLabel ?? 'Search'
 
   return (
     <form class="DocSearch-Form" ref={props.form} {...formProps}>
@@ -37,7 +59,9 @@ export function SearchBox(props: SearchBoxProps) {
         {...props.autocomplete.getLabelProps()}
       >
         <SearchIcon />
-        <span class="DocSearch-VisuallyHiddenForAccessibility">Search</span>
+        <span class="DocSearch-VisuallyHiddenForAccessibility">
+          {searchInputLabel}
+        </span>
       </label>
 
       <input
@@ -53,18 +77,18 @@ export function SearchBox(props: SearchBoxProps) {
         <button
           class="DocSearch-Clear"
           type="reset"
-          aria-label="Clear the query"
+          aria-label={clearButtonAriaLabel}
           hidden={!hasQuery}
           tabindex={hasQuery ? 0 : -1}
         >
-          Clear
+          {clearButtonTitle}
         </button>
         {hasQuery ? <div class="DocSearch-Divider" /> : null}
         <button
           class="DocSearch-Action DocSearch-Close"
           type="button"
-          title="Close"
-          aria-label="Close"
+          title={closeButtonText}
+          aria-label={closeButtonAriaLabel}
           onClick={props.onClose}
         >
           <CloseIcon />
