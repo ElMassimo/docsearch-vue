@@ -51,6 +51,7 @@ export function SearchBox(props: SearchBoxProps) {
     props.translations?.cancelButtonAriaLabel ??
     'Close'
   const searchInputLabel = props.translations?.searchInputLabel ?? 'Search'
+  const enterKeyHint = props.translations?.enterKeyHint ?? 'search'
 
   return (
     <form class="DocSearch-Form" ref={props.form} {...formProps}>
@@ -75,6 +76,7 @@ export function SearchBox(props: SearchBoxProps) {
         onInput={onChange}
         onCompositionend={onCompositionEnd}
         onKeydown={onKeyDown}
+        enterkeyhint={enterKeyHint}
       />
 
       <div class="DocSearch-Actions">
@@ -82,6 +84,7 @@ export function SearchBox(props: SearchBoxProps) {
           class="DocSearch-Clear"
           type="reset"
           aria-label={clearButtonAriaLabel}
+          aria-hidden={!hasQuery}
           hidden={!hasQuery}
           tabindex={hasQuery ? 0 : -1}
         >

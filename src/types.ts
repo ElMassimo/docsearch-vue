@@ -51,6 +51,7 @@ export interface SearchBoxTranslations {
   closeButtonText?: string
   closeButtonAriaLabel?: string
   placeholderText?: string
+  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send'
   searchInputLabel?: string
   resetButtonTitle?: string
   resetButtonAriaLabel?: string

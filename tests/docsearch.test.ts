@@ -48,6 +48,7 @@ describe('docsearch', () => {
           searchBox: {
             clearButtonTitle: 'Effacer',
             closeButtonAriaLabel: 'Fermer',
+            enterKeyHint: 'go',
             placeholderText: 'Rechercher la documentation'
           },
           footer: {
@@ -72,6 +73,9 @@ describe('docsearch', () => {
 
     expect(document.querySelector('.DocSearch-Input')?.getAttribute('placeholder')).toBe(
       'Rechercher la documentation'
+    )
+    expect(document.querySelector('.DocSearch-Input')?.getAttribute('enterkeyhint')).toBe(
+      'go'
     )
     expect(document.querySelector('.DocSearch-Clear')?.textContent).toBe('Effacer')
     expect(document.querySelector('.DocSearch-Close')?.getAttribute('aria-label')).toBe(
