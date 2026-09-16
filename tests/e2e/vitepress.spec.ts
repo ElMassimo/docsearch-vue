@@ -36,14 +36,19 @@ test('replaces VitePress DocSearch with the Vue implementation', async ({
   await expect(page.getByRole('heading', { name: 'Getting Started' })).toBeVisible()
 
   await page.locator('.DocSearch-Button').click()
+  await page.locator('.DocSearch-Input').fill('install')
+  await expect(page.locator('.DocSearch-Hit-title')).toHaveText('Install')
+  await page.locator('.DocSearch-Input').press('Enter')
+  await expect(page).toHaveURL(/\/guide\/getting-started(?:\.html)?#install$/)
+  await expect(page.getByRole('heading', { name: 'Install' })).toBeVisible()
+
+  await page.locator('.DocSearch-Button').click()
   await expect(page.locator('.DocSearch-Hit-source')).toHaveText(
     'Recently viewed docs'
   )
-  await expect(page.locator('.DocSearch-Hit-title')).toHaveText(
-    'Getting Started'
-  )
+  await expect(page.locator('.DocSearch-Hit-title').first()).toHaveText('Install')
 
-  await page.getByRole('button', { name: 'Pin this search' }).click()
-  await expect(page.locator('.DocSearch-Hit-source')).toHaveText('Pinned')
+  await page.getByRole('button', { name: 'Pin this search' }).first().click()
+  await expect(page.locator('.DocSearch-Hit-source').first()).toHaveText('Pinned')
   expect(errors).toEqual([])
 })

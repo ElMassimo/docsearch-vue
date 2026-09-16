@@ -13,19 +13,26 @@ export default defineConfig({
         transformSearchClient(searchClient) {
           return {
             ...searchClient,
-            async search() {
+            async search(params) {
+              const requests = (params as {
+                requests: Array<{ query?: string }>
+              }).requests
+              const query = requests[0]?.query ?? ''
+              const isInstall = query === 'install'
               return {
                 results: [
                   {
                     index: 'test-docs',
                     hits: [
                       {
-                        objectID: 'getting-started',
+                        objectID: isInstall ? 'install' : 'getting-started',
                         type: 'lvl1',
-                        url: '/guide/getting-started',
+                        url: isInstall
+                          ? '/guide/getting-started#install'
+                          : '/guide/getting-started',
                         hierarchy: {
                           lvl0: 'Guide',
-                          lvl1: 'Getting Started'
+                          lvl1: isInstall ? 'Install' : 'Getting Started'
                         }
                       }
                     ],
@@ -35,7 +42,7 @@ export default defineConfig({
                     page: 0,
                     processingTimeMS: 1,
                     exhaustiveNbHits: true,
-                    query: 'getting',
+                    query,
                     params: ''
                   }
                 ]
