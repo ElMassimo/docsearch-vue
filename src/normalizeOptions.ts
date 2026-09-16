@@ -34,6 +34,10 @@ export function normalizeOptions(
     environment: options.environment,
     placeholder: options.placeholder,
     translations: options.translations,
+    disableUserPersonalization: options.disableUserPersonalization,
+    recentSearchesLimit: options.recentSearchesLimit,
+    recentSearchesWithFavoritesLimit:
+      options.recentSearchesWithFavoritesLimit,
     navigator: options.navigator,
     transformItems: options.transformItems,
     transformSearchClient: options.transformSearchClient,

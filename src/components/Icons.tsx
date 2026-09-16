@@ -28,6 +28,14 @@ export function SourceIcon(props: IconProps) {
   )
 }
 
+export function PinIcon(props: IconProps) {
+  return (
+    <svg {...props} width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m9 3 6 6m-8 2 6 6m-7 1 5-5m2-8 6 6-3 2-5-5 2-3ZM4 20l4-4" fill="none" stroke="currentColor" />
+    </svg>
+  )
+}
+
 export function SelectIcon(props: IconProps) {
   return (
     <svg {...props} width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">

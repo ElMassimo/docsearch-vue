@@ -34,5 +34,16 @@ test('replaces VitePress DocSearch with the Vue implementation', async ({
   await page.locator('.DocSearch-Input').press('Enter')
   await expect(page).toHaveURL(/\/guide\/getting-started(?:\.html)?$/)
   await expect(page.getByRole('heading', { name: 'Getting Started' })).toBeVisible()
+
+  await page.locator('.DocSearch-Button').click()
+  await expect(page.locator('.DocSearch-Hit-source')).toHaveText(
+    'Recently viewed docs'
+  )
+  await expect(page.locator('.DocSearch-Hit-title')).toHaveText(
+    'Getting Started'
+  )
+
+  await page.getByRole('button', { name: 'Pin this search' }).click()
+  await expect(page.locator('.DocSearch-Hit-source')).toHaveText('Pinned')
   expect(errors).toEqual([])
 })

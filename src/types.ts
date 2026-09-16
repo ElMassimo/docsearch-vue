@@ -67,6 +67,14 @@ export interface NoResultsTranslations {
   noResultsText?: string
 }
 
+export interface StartScreenTranslations {
+  recentSearchesTitle?: string
+  favoriteSearchesTitle?: string
+  saveRecentSearchButtonTitle?: string
+  removeRecentSearchButtonTitle?: string
+  removeFavoriteSearchButtonTitle?: string
+}
+
 export interface ErrorTranslations {
   titleText?: string
   helpText?: string
@@ -77,6 +85,7 @@ export interface ModalTranslations {
   footer?: FooterTranslations
   noResultsScreen?: NoResultsTranslations
   errorScreen?: ErrorTranslations
+  startScreen?: StartScreenTranslations
 }
 
 export interface DocSearchTranslations {
@@ -96,6 +105,9 @@ interface CommonDocSearchOptions {
   environment?: Window
   placeholder?: string
   translations?: DocSearchTranslations
+  disableUserPersonalization?: boolean
+  recentSearchesLimit?: number
+  recentSearchesWithFavoritesLimit?: number
   navigator?: AutocompleteOptions<DocSearchHit>['navigator']
   transformItems?: (items: DocSearchHit[]) => DocSearchHit[]
   transformSearchClient?: (

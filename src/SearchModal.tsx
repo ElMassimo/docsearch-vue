@@ -9,6 +9,7 @@ import { defineComponent, onMounted, ref, shallowRef, type PropType } from 'vue'
 import { Footer } from './components/Footer'
 import { ScreenState } from './components/ScreenState'
 import { SearchBox } from './components/SearchBox'
+import { createStoredSearches } from './storedSearches'
 import type {
   DocSearchHit,
   DocSearchTransformClient,
@@ -55,6 +56,33 @@ export const SearchModal = defineComponent({
     const input = ref<HTMLInputElement | null>(null)
     const modal = ref<HTMLDivElement | null>(null)
     const searchClient = createSearchClient(props.options)
+    const defaultIndexName = props.options.indices[0].name
+    const environment = props.options.environment ?? window
+    const favoriteSearches = createStoredSearches(
+      `__DOCSEARCH_FAVORITE_SEARCHES__${defaultIndexName}`,
+      10,
+      environment.localStorage
+    )
+    const recentSearches = createStoredSearches(
+      `__DOCSEARCH_RECENT_SEARCHES__${defaultIndexName}`,
+      favoriteSearches.getAll().length === 0
+        ? props.options.recentSearchesLimit ?? 7
+        : props.options.recentSearchesWithFavoritesLimit ?? 4,
+      environment.localStorage
+    )
+
+    function saveRecentSearch(item: DocSearchHit): void {
+      if (props.options.disableUserPersonalization) return
+
+      const search = item.type === 'content'
+        ? item.__docsearch_parent ?? { ...item, type: 'lvl1', content: null }
+        : item
+      const isFavorite = favoriteSearches
+        .getAll()
+        .some((favorite) => favorite.objectID === search.objectID)
+
+      if (!isFavorite) recentSearches.add(search)
+    }
 
     const autocomplete = createAutocomplete<
       DocSearchHit,
@@ -71,7 +99,24 @@ export const SearchModal = defineComponent({
         state.value = nextState
       },
       async getSources({ query, setStatus }) {
-        if (!query) return []
+        if (!query) {
+          if (props.options.disableUserPersonalization) return []
+
+          return [
+            {
+              sourceId: 'favoriteSearches',
+              getItemUrl: ({ item }) => item.url,
+              getItems: () => favoriteSearches.getAll(),
+              onSelect: () => props.onClose()
+            },
+            {
+              sourceId: 'recentSearches',
+              getItemUrl: ({ item }) => item.url,
+              getItems: () => recentSearches.getAll(),
+              onSelect: () => props.onClose()
+            }
+          ]
+        }
 
         try {
           const { results } = await searchClient.search<DocSearchHit>({
@@ -126,7 +171,8 @@ export const SearchModal = defineComponent({
                 getItemUrl({ item }) {
                   return item.url
                 },
-                onSelect() {
+                onSelect({ item }) {
+                  saveRecentSearch(item)
                   props.onClose()
                 },
                 getItems() {
@@ -146,7 +192,7 @@ export const SearchModal = defineComponent({
     useModalEnvironment(
       autocomplete,
       { container, dropdown, form, input, modal },
-      props.options.environment ?? window
+      environment
     )
     onMounted(() => input.value?.focus())
 
@@ -188,6 +234,19 @@ export const SearchModal = defineComponent({
               autocomplete={autocomplete}
               state={state.value}
               translations={props.options.translations?.modal}
+              onFavorite={(item) => {
+                favoriteSearches.add(item)
+                recentSearches.remove(item)
+                void autocomplete.refresh()
+              }}
+              onRemoveFavorite={(item) => {
+                favoriteSearches.remove(item)
+                void autocomplete.refresh()
+              }}
+              onRemoveRecent={(item) => {
+                recentSearches.remove(item)
+                void autocomplete.refresh()
+              }}
             />
           </div>
 

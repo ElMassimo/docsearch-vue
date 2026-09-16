@@ -17,5 +17,6 @@ export type {
   NoResultsTranslations,
   NormalizedDocSearchOptions,
   SearchBoxTranslations,
+  StartScreenTranslations,
   VitePressDocSearchOptions
 } from './types'

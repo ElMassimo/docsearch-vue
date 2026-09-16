@@ -7,14 +7,25 @@ import type {
   ErrorTranslations,
   HierarchyLevel,
   ModalTranslations,
-  NoResultsTranslations
+  NoResultsTranslations,
+  StartScreenTranslations
 } from '../types'
-import { ErrorIcon, NoResultsIcon, SelectIcon, SourceIcon } from './Icons'
+import {
+  CloseIcon,
+  ErrorIcon,
+  NoResultsIcon,
+  PinIcon,
+  SelectIcon,
+  SourceIcon
+} from './Icons'
 
 interface ScreenStateProps {
   autocomplete: DocSearchAutocomplete
   state: AutocompleteState<DocSearchHit>
   translations?: ModalTranslations
+  onFavorite(item: DocSearchHit): void
+  onRemoveFavorite(item: DocSearchHit): void
+  onRemoveRecent(item: DocSearchHit): void
 }
 
 function getNestedValue(hit: DocSearchHit, path: string): unknown {
@@ -104,15 +115,30 @@ function ErrorScreen({ translations = {} }: { translations?: ErrorTranslations }
   )
 }
 
+function sourceTitle(
+  sourceId: string,
+  fallback: string,
+  translations: StartScreenTranslations = {}
+): string {
+  if (sourceId === 'favoriteSearches') {
+    return translations.favoriteSearchesTitle ?? 'Pinned'
+  }
+  if (sourceId === 'recentSearches') {
+    return translations.recentSearchesTitle ?? 'Recently viewed docs'
+  }
+  return fallback
+}
+
 export function ScreenState(props: ScreenStateProps) {
   if (props.state.status === 'error') {
     return <ErrorScreen translations={props.translations?.errorScreen} />
   }
-  if (!props.state.query) return <div class="DocSearch-Dropdown-Container" />
-
   const hasResults = props.state.collections.some(
     (collection) => collection.items.length > 0
   )
+  if (!props.state.query && !hasResults) {
+    return <div class="DocSearch-Dropdown-Container" />
+  }
   if (!hasResults) {
     return (
       <NoResults
@@ -126,7 +152,11 @@ export function ScreenState(props: ScreenStateProps) {
     <div class="DocSearch-Dropdown-Container">
       {props.state.collections.map((collection) => {
         if (collection.items.length === 0) return null
-        const title = collection.items[0]?.hierarchy.lvl0 ?? ''
+        const title = sourceTitle(
+          collection.source.sourceId,
+          collection.items[0]?.hierarchy.lvl0 ?? '',
+          props.translations?.startScreen
+        )
 
         return (
           <section class="DocSearch-Hits" key={collection.source.sourceId}>
@@ -138,7 +168,12 @@ export function ScreenState(props: ScreenStateProps) {
               class="DocSearch-Hits-padded"
               {...props.autocomplete.getListProps({ source: collection.source })}
             >
-              {collection.items.map((item) => (
+              {collection.items.map((item) => {
+                const startTranslations = props.translations?.startScreen
+                const isFavorite = collection.source.sourceId === 'favoriteSearches'
+                const isRecent = collection.source.sourceId === 'recentSearches'
+
+                return (
                 <li
                   class={[
                     'DocSearch-Hit',
@@ -168,11 +203,55 @@ export function ScreenState(props: ScreenStateProps) {
                         <span class="DocSearch-Hit-title">{hitTitle(item)}</span>
                         <span class="DocSearch-Hit-path">{breadcrumbs(item)}</span>
                       </div>
-                      <div class="DocSearch-Hit-action"><SelectIcon /></div>
+                      <div class="DocSearch-Hit-action">
+                        {isRecent ? (
+                          <button
+                            class="DocSearch-Hit-action-button DocSearch-Hit-action-button--pin"
+                            type="button"
+                            title={startTranslations?.saveRecentSearchButtonTitle ?? 'Pin this search'}
+                            aria-label={startTranslations?.saveRecentSearchButtonTitle ?? 'Pin this search'}
+                            onClick={(event) => {
+                              event.preventDefault()
+                              event.stopPropagation()
+                              props.onFavorite(item)
+                            }}
+                          >
+                            <PinIcon />
+                          </button>
+                        ) : null}
+                        {isRecent || isFavorite ? (
+                          <button
+                            class="DocSearch-Hit-action-button"
+                            type="button"
+                            title={
+                              isFavorite
+                                ? startTranslations?.removeFavoriteSearchButtonTitle ?? 'Remove this saved search'
+                                : startTranslations?.removeRecentSearchButtonTitle ?? 'Remove this search from history'
+                            }
+                            aria-label={
+                              isFavorite
+                                ? startTranslations?.removeFavoriteSearchButtonTitle ?? 'Remove this saved search'
+                                : startTranslations?.removeRecentSearchButtonTitle ?? 'Remove this search from history'
+                            }
+                            onClick={(event) => {
+                              event.preventDefault()
+                              event.stopPropagation()
+                              isFavorite
+                                ? props.onRemoveFavorite(item)
+                                : props.onRemoveRecent(item)
+                            }}
+                          >
+                            <CloseIcon />
+                          </button>
+                        ) : (
+                          <SelectIcon />
+                        )}
+                      </div>
                     </div>
                   </a>
                 </li>
-              ))}
+                )
+              })}
             </ul>
           </section>
         )
