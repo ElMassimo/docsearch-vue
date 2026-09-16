@@ -52,3 +52,31 @@ test('replaces VitePress DocSearch with the Vue implementation', async ({
   await expect(page.locator('.DocSearch-Hit-source').first()).toHaveText('Pinned')
   expect(errors).toEqual([])
 })
+
+test('uses the DocSearch mobile layout and dark theme', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  await page.evaluate(() => {
+    document.documentElement.dataset.theme = 'dark'
+    document.documentElement.classList.add('dark')
+  })
+  await page.locator('.DocSearch-Button').click()
+
+  const modal = page.locator('.DocSearch-Modal')
+  await expect(modal).toBeVisible()
+  await expect(modal).toHaveCSS('border-radius', '0px')
+  await expect(modal).toHaveCSS('background-color', 'rgb(32, 33, 39)')
+  expect(await modal.boundingBox()).toMatchObject({
+    x: 0,
+    y: 0,
+    width: 390,
+    height: 844
+  })
+
+  await page.locator('.DocSearch-Input').fill('getting')
+  await expect(page.locator('.DocSearch-Hit-title')).toHaveText(
+    'Getting Started'
+  )
+  await page.locator('.DocSearch-Input').press('Escape')
+  await expect(modal).toBeHidden()
+})
