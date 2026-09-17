@@ -26,7 +26,7 @@ jobs:
       - run: pnpm verify
       - run: pnpm audit --prod --audit-level high
       - name: Verify release tag matches package version
-        run: test "v$(node -p \"require('./package.json').version\")" = "$GITHUB_REF_NAME"
+        run: node scripts/check-release-tag.mjs
       - run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
